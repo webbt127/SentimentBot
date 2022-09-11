@@ -73,7 +73,7 @@ while True:
                 if sentiment_ratio < 1 or df['sent'].iloc[0] == 0:
                     api.submit_order(
                         symbol=ticker,
-                        qty=1,
+                        qty=position.qty,
                         side='sell',
                         type='market',
                         time_in_force='gtc'
@@ -83,7 +83,7 @@ while True:
                 if sentiment_ratio >= 2 and df['sent'].iloc[0] == 2:
                     api.submit_order(
                         symbol=ticker,
-                        qty=1,
+                        notional=1000,
                         side='buy',
                         type='market',
                         time_in_force='gtc'
@@ -91,4 +91,4 @@ while True:
                     print("BUY " + ticker)
         else:
             print("Market is Closed! Sleeping for 10 minutes...")
-            time.sleep(1)
+            time.sleep(600)
