@@ -26,7 +26,6 @@ def preprocessText(text):
 while True:
     for ticker in tickers:
         url = finviz_url + ticker
-        time.sleep(1)
         req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
         response = urlopen(req)
 
@@ -92,5 +91,7 @@ while True:
                     )
                     print("BUY " + ticker)
         else:
-            print("Market is Closed! Sleeping for 10 minutes...")
-            time.sleep(600)
+            print("Market is Closed!")
+    if clock.is_open == False:
+        print("Market is Closed! Sleeping for 10 minutes...")
+        time.sleep(600)
