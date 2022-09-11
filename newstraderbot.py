@@ -60,17 +60,17 @@ while True:
         account = api.get_account()
 
         modeSentiment = df.sent.mode().iloc[0]
-        print(ticker + " Positive Sentiment:")
-        print(df['sent'].value_counts().loc[2])
-        print(ticker + " Negative Sentiment:")
-        print(df['sent'].value_counts().loc[0])
+        print(ticker, "Most Recent News Title", [df['News_Title'].iloc[0]], "Sentiment:", df['sent'].iloc[0])
+        print(ticker, "Positive Sentiment Counts:", df['sent'].value_counts().loc[2])
+        print(ticker, "Negative Sentiment Counts:", df['sent'].value_counts().loc[0])
         clock = api.get_clock()
+        sentiment_ratio = df['sent'].value_counts().loc[2] / df['sent'].value_counts().loc[0]
 
         if clock.is_open:
             try:
                 position = api.get_position(ticker)
                 print(position)
-                if df['sent'].value_counts().loc[0] > df['sent'].value_counts().loc[2]:
+                if sentiment_ratio < 1 or df['sent'].iloc[0] == 0:
                     api.submit_order(
                         symbol=ticker,
                         qty=1,
@@ -80,7 +80,7 @@ while True:
                     )
                     print("SELL " + ticker)
             except Exception as e:
-                if df['sent'].value_counts().loc[0] < df['sent'].value_counts().loc[2]:
+                if sentiment_ratio >= 2 and df['sent'].iloc[0] == 2:
                     api.submit_order(
                         symbol=ticker,
                         qty=1,
@@ -91,4 +91,4 @@ while True:
                     print("BUY " + ticker)
         else:
             print("Market is Closed! Sleeping for 10 minutes...")
-            time.sleep(600)
+            time.sleep(1)
