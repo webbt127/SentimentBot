@@ -12,6 +12,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import alpaca_trade_api as tradeapi
 import time
+import warnings
+warnings.filterwarnings("ignore")
 
 finviz_url = "https://finviz.com/quote.ashx?t="
 tickers = {"TSLA", "NIO", "AMD", "NVDA", "GME", "AAPL", "SPY", "SHOP", "INTC", "ATVI", "META"}
