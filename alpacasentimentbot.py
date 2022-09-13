@@ -36,7 +36,7 @@ async def news_data_handler(news):
 	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
 	clock = api.get_clock()
 
-	if sentiment[0]['label'] != 'neutral'
+	if sentiment[0]['label'] != 'neutral':
 		for ticker in tickers:
 			stock_info = yf.Ticker(ticker).info
 			stock_price = stock_info['regularMarketPrice']
