@@ -24,7 +24,7 @@ async def news_data_handler(news):
 	headline = news.headline
 	tickers = news.symbols
 
-	print("News Event for", tickers,"!")
+	print("News Event for", tickers)
 
 	relevant_text = summary + headline
 	sentiment = classifier(relevant_text)
@@ -50,7 +50,7 @@ async def news_data_handler(news):
 				except Exception as e:
 					print("Market Sell Order Failed!", e)
 			else:
-				print(ticker, "Conditions not sufficient to sell.")
+				print("Conditions not sufficient to sell.")
 		except Exception as e:
 			print("Buying", ticker,"...")
 			if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95:
@@ -60,7 +60,7 @@ async def news_data_handler(news):
 				except Exception as e:
 					print("Market Buy Order Failed!", e)
 			else:
-				print(ticker, "Condition not sufficient to buy.")
+				print("Conditions not sufficient to buy.")
 
 
 stream_client.subscribe_news(news_data_handler, "*")
