@@ -24,7 +24,7 @@ async def news_data_handler(news):
 	headline = news.headline
 	tickers = news.symbols
 
-	print("News Event for", tickers, "!")
+	print("News Event for", tickers,"!")
 
 	relevant_text = summary + headline
 	sentiment = classifier(relevant_text)
@@ -42,23 +42,25 @@ async def news_data_handler(news):
 		buy_shares = round(1000/stock_price)
 		try:
 			position = api.get_position(ticker)
+			print("Selling", ticker,"...")
 			if sentiment[0]['label'] == 'NEGATIVE' and sentiment[0]['score'] > 0.95:
 				try:
 					rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='market', time_in_force='gtc')
-					print(ticker, "Market Sell Order Submitted!")
+					print("Market Sell Order Submitted!")
 				except Exception as e:
-					print(ticker, "Market Sell Order Failed!", e)
+					print("Market Sell Order Failed!", e)
 			else:
-				print(ticker, "Position Already Exists! Condition not sufficient to sell.")
+				print(ticker, "Conditions not sufficient to sell.")
 		except Exception as e:
+			print("Buying", ticker,"...")
 			if sentiment[0]['label'] == 'POSITIVE' and sentiment[0]['score'] > 0.95:
 				try:
 					rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='market', time_in_force='gtc')
-					print(ticker, "Market Buy Order Submitted!")
+					print("Market Buy Order Submitted!")
 				except Exception as e:
-					print(ticker, "Market Buy Order Failed!", e)
+					print("Market Buy Order Failed!", e)
 			else:
-				print(ticker, "No Existing Position! Condition not sufficient to buy")
+				print(ticker, "Condition not sufficient to buy.")
 
 
 stream_client.subscribe_news(news_data_handler, "*")
