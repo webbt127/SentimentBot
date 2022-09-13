@@ -2,8 +2,8 @@ from alpaca_trade_api import REST, Stream
 from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
 
-API_KEY = 'PKBZFTD9KPUGALJOW7EY'
-API_SECRET = '4W8IkPJXCo7WoiEOZPVyURyc1ojnAcW299bSdXwP'
+API_KEY = 'PKDA0Y124QP7Q3IYFHPA'
+API_SECRET = 'EUqPcOY2MEeZ8YidplKL0wldpgpGsB7awiWZViM6'
 
 model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
 tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
