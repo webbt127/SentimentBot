@@ -43,7 +43,7 @@ async def news_data_handler(news):
 		try:
 			position = api.get_position(ticker)
 			print("Selling", ticker,"...")
-			if sentiment[0]['label'] == 'NEGATIVE' and sentiment[0]['score'] > 0.95:
+			if sentiment[0]['label'] == 'negative' and sentiment[0]['score'] > 0.95:
 				try:
 					rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='market', time_in_force='gtc')
 					print("Market Sell Order Submitted!")
@@ -53,7 +53,7 @@ async def news_data_handler(news):
 				print(ticker, "Conditions not sufficient to sell.")
 		except Exception as e:
 			print("Buying", ticker,"...")
-			if sentiment[0]['label'] == 'POSITIVE' and sentiment[0]['score'] > 0.95:
+			if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95:
 				try:
 					rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='market', time_in_force='gtc')
 					print("Market Buy Order Submitted!")
