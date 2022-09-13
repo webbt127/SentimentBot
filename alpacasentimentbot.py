@@ -46,7 +46,7 @@ async def news_data_handler(news):
 		buy_shares = round(1000/stock_price)
 		try:
 			position = api.get_position(ticker)
-			print("Selling", ticker,"...")
+			print("Selling", ticker, "...")
 			if sentiment[0]['label'] == 'negative' and sentiment[0]['score'] > 0.95:
 				try:
 					rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='market', time_in_force='gtc')
