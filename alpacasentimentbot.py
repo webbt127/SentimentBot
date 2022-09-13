@@ -2,6 +2,10 @@ from alpaca_trade_api import REST, Stream
 from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
 import yfinance as yf
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
+pool = ThreadPoolExecutor(1)
 
 API_KEY = 'PKY18D0R1JOWO0YN0BWC'
 API_SECRET = 'zRtwLDoy1MXgPPmSI5twOxoezBQ5edzisJje0UWy'
@@ -61,8 +65,16 @@ async def news_data_handler(news):
 					print("Market Buy Order Failed!", e)
 			else:
 				print("Conditions not sufficient to buy.")
-
-
-stream_client.subscribe_news(news_data_handler, "*")
-print("Stream Client Starting, Waiting For Market News...")
-stream_client.run()
+				
+def client_thread():
+	
+	stream_client.subscribe_news(news_data_handler, "*")
+	print("Stream Client Starting, Waiting For Market News...")
+	stream_client.run()
+	
+while True:
+	try:
+		pool.submit(client_thread)
+	except KeyboardInterrupt:
+		print("Closing Stream Client...")
+		stream_client.stop()
