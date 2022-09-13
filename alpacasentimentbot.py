@@ -1,9 +1,10 @@
 from alpaca_trade_api import REST, Stream
 from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
+import yfinance as yf
 
-API_KEY = 'PKDA0Y124QP7Q3IYFHPA'
-API_SECRET = 'EUqPcOY2MEeZ8YidplKL0wldpgpGsB7awiWZViM6'
+API_KEY = 'PKY18D0R1JOWO0YN0BWC'
+API_SECRET = 'zRtwLDoy1MXgPPmSI5twOxoezBQ5edzisJje0UWy'
 
 model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
 tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
@@ -36,6 +37,9 @@ async def news_data_handler(news):
 	clock = api.get_clock()
 
 	for ticker in tickers:
+		stock_info = yf.Ticker(ticker).info
+		stock_price = stock_info['regularMarketPrice']
+		buy_shares = round(1000/stock_price)
 		try:
 			position = api.get_position(ticker)
 			if sentiment[0]['label'] == 'NEGATIVE' and sentiment[0]['score'] > 0.95:
@@ -49,7 +53,7 @@ async def news_data_handler(news):
 		except Exception as e:
 			if sentiment[0]['label'] == 'POSITIVE' and sentiment[0]['score'] > 0.95:
 				try:
-					rest_client.submit_order(symbol=ticker, notional=1000, side='buy', type='market', time_in_force='gtc')
+					rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='market', time_in_force='gtc')
 					print(ticker, "Market Buy Order Submitted!")
 				except Exception as e:
 					print(ticker, "Market Buy Order Failed!", e)
