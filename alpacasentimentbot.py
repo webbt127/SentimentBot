@@ -29,15 +29,14 @@ async def news_data_handler(news):
 	headline = news.headline
 	tickers = news.symbols
 
-	print("News Event for", tickers)
-
 	relevant_text = summary + headline
 	sentiment = classifier(relevant_text)
-
-	print(relevant_text)
-	print("Sentiment:", sentiment[0]['label'])
-	print("Score:", sentiment[0]['score'])
-	print("ID:", news.id)
+	if news.id != previous_id:
+		print("News Event for", tickers)
+		print(relevant_text)
+		print("Sentiment:", sentiment[0]['label'])
+		print("Score:", sentiment[0]['score'])
+		print("ID:", news.id)
 
 	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
 	clock = api.get_clock()
