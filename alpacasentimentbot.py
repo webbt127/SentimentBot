@@ -20,6 +20,7 @@ rest_client = REST(API_KEY, API_SECRET, endpoint)
 print("Classifier Loaded!")
 #historical_news = rest_client.get_news("*", "2022-08-29", "2022-09-01")
 #print(historical_news)
+previous_id = 0
 
 
 async def news_data_handler(news):
@@ -27,6 +28,7 @@ async def news_data_handler(news):
 	summary = news.summary
 	headline = news.headline
 	tickers = news.symbols
+	global previous_id
 
 	relevant_text = summary + headline
 	sentiment = classifier(relevant_text)
@@ -39,7 +41,7 @@ async def news_data_handler(news):
 	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
 	clock = api.get_clock()
 
-	if sentiment[0]['label'] != 'neutral' and sentiment[0]['score'] > 0.95:
+	if sentiment[0]['label'] != 'neutral' and sentiment[0]['score'] > 0.95 and news.id != previous_id:
 		for ticker in tickers:
 			try:
 				position = api.get_position(ticker)
@@ -69,6 +71,7 @@ async def news_data_handler(news):
 						print("Market Buy Order Failed!", e)
 				else:
 					print("Conditions not sufficient to buy.")
+	previous_id = news.id
 	print("Waiting For Market News...")
 
 
