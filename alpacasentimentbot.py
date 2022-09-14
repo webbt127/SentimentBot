@@ -46,7 +46,10 @@ async def news_data_handler(news):
 				print("Selling", ticker,"...")
 				if sentiment[0]['label'] == 'negative' and sentiment[0]['score'] > 0.95:
 					try:
-						rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='market', time_in_force='gtc')
+						stock_info = yf.Ticker(ticker).info
+						stock_price = stock_info['regularMarketPrice']
+						stock_price_order = stock_price *1.05
+						rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='limit', limit_price=stock_price_order, time_in_force='gtc')
 						print("Market Sell Order Submitted!")
 					except Exception as e:
 						print("Market Sell Order Failed!", e)
@@ -59,7 +62,8 @@ async def news_data_handler(news):
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
 						buy_shares = round(1000/stock_price)
-						rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='market', time_in_force='gtc')
+						stock_price_order = stock_price *1.05
+						rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='limit', limit_price=stock_price_order, time_in_force='gtc')
 						print("Market Buy Order Submitted!")
 					except Exception as e:
 						print("Market Buy Order Failed!", e)
