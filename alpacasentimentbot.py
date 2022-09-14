@@ -2,11 +2,6 @@ from alpaca_trade_api import REST, Stream
 from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
 import yfinance as yf
-import sys
-
-print("Starting Logging...")
-sys.stdout = open('logfile', 'w')
-print("Logging Started!")
 
 API_KEY = 'PK0MNNS3TBJ4XECMIER6'
 API_SECRET = 'qPOaSK9K20xkE72huXx5hZFi1sic1wItiSEzXMGE'
