@@ -4,19 +4,25 @@ import alpaca_trade_api as tradeapi
 import yfinance as yf
 import sys
 
+print("Starting Logging...")
 sys.stdout = open('logfile', 'w')
+print("Logging Started!")
 
 API_KEY = 'PK0MNNS3TBJ4XECMIER6'
 API_SECRET = 'qPOaSK9K20xkE72huXx5hZFi1sic1wItiSEzXMGE'
 endpoint = "https://paper-api.alpaca.markets"
 
+print("Loading Machine Learning Model...")
 model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
 tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
+print("Machine Learning Model Loaded!")
 
+print("Loading Classifier...")
 #classifier = pipeline('sentiment-analysis')
 classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 stream_client = Stream(API_KEY, API_SECRET)
 rest_client = REST(API_KEY, API_SECRET, endpoint)
+print("Classifier Loaded!")
 #historical_news = rest_client.get_news("*", "2022-08-29", "2022-09-01")
 #print(historical_news)
 
@@ -69,6 +75,7 @@ async def news_data_handler(news):
 						print("Market Buy Order Failed!", e)
 				else:
 					print("Conditions not sufficient to buy.")
+	print("Waiting For Market News...")
 
 
 stream_client.subscribe_news(news_data_handler, "*")
