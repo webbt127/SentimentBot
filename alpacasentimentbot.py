@@ -48,7 +48,7 @@ async def news_data_handler(news):
 					try:
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
-						stock_price_order = stock_price *1.05
+						stock_price_order = stock_price * 0.98
 						rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='limit', limit_price=stock_price_order, time_in_force='gtc')
 						print("Market Sell Order Submitted!")
 					except Exception as e:
