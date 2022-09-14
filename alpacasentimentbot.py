@@ -3,8 +3,8 @@ from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
 import yfinance as yf
 
-API_KEY = 'PK0MNNS3TBJ4XECMIER6'
-API_SECRET = 'qPOaSK9K20xkE72huXx5hZFi1sic1wItiSEzXMGE'
+API_KEY = 'PKVLATR3V44A75JDC07W'
+API_SECRET = 'ngvSepjmymi5Aj0wn13kU6h1ZJyfzfMkQxfDzvmv'
 endpoint = "https://paper-api.alpaca.markets"
 
 print("Loading Machine Learning Model...")
