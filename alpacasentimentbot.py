@@ -20,7 +20,6 @@ rest_client = REST(API_KEY, API_SECRET, endpoint)
 print("Classifier Loaded!")
 #historical_news = rest_client.get_news("*", "2022-08-29", "2022-09-01")
 #print(historical_news)
-previous_id = 0
 
 
 async def news_data_handler(news):
@@ -31,17 +30,16 @@ async def news_data_handler(news):
 
 	relevant_text = summary + headline
 	sentiment = classifier(relevant_text)
-	if news.id != previous_id:
-		print("News Event for", tickers)
-		print(relevant_text)
-		print("Sentiment:", sentiment[0]['label'])
-		print("Score:", sentiment[0]['score'])
-		print("ID:", news.id)
+	print("News Event for", tickers)
+	print(relevant_text)
+	print("Sentiment:", sentiment[0]['label'])
+	print("Score:", sentiment[0]['score'])
+	print("ID:", news.id)
 
 	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
 	clock = api.get_clock()
 
-	if sentiment[0]['label'] != 'neutral' and sentiment[0]['score'] > 0.95 and news.id != previous_id:
+	if sentiment[0]['label'] != 'neutral' and sentiment[0]['score'] > 0.95:
 		for ticker in tickers:
 			try:
 				position = api.get_position(ticker)
@@ -50,7 +48,7 @@ async def news_data_handler(news):
 					try:
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
-						stock_price_order = stock_price * 0.98
+						stock_price_order = round(stock_price * 0.98)
 						rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='limit', limit_price=stock_price_order, time_in_force='gtc')
 						print("Market Sell Order Submitted!")
 					except Exception as e:
@@ -64,7 +62,7 @@ async def news_data_handler(news):
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
 						buy_shares = round(1000/stock_price)
-						stock_price_order = stock_price *1.05
+						stock_price_order = round(stock_price *1.02)
 						rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='limit', limit_price=stock_price_order, time_in_force='gtc')
 						print("Market Buy Order Submitted!")
 					except Exception as e:
@@ -72,7 +70,6 @@ async def news_data_handler(news):
 				else:
 					print("Conditions not sufficient to buy.")
 	print("Waiting For Market News...")
-	previous_id = news.id
 
 
 stream_client.subscribe_news(news_data_handler, "*")
