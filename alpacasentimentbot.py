@@ -37,6 +37,7 @@ async def news_data_handler(news):
 	print(relevant_text)
 	print("Sentiment:", sentiment[0]['label'])
 	print("Score:", sentiment[0]['score'])
+	print("ID:", news.id)
 
 	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
 	clock = api.get_clock()
