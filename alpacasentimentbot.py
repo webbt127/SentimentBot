@@ -51,6 +51,8 @@ async def news_data_handler(news):
 
 	if news.id != previous_id:
 		for ticker in tickers:
+			stock_info = yf.Ticker(ticker).info
+			print(stock_info)
 			try:
 				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nasdaq', interval=Interval.INTERVAL_1_HOUR)
 			except Exception as e:
@@ -72,7 +74,6 @@ async def news_data_handler(news):
 				print("Buying", ticker,"...")
 				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and (recommendation == 'BUY' or recommendation == 'STRONG_BUY') and clock.is_open:
 					try:
-						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
 						buy_shares = round(1000/stock_price)
 						rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='market', time_in_force='gtc')
