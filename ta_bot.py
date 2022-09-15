@@ -36,6 +36,7 @@ while True:
         except Exception as e:
           print("Market Sell Order Failed!", e)
   print("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-  if clock.is_open == 0
+  if clock.is_open == 0:
     api.cancel_all_orders()
+    print("All Open Orders Cancelled!")
   time.sleep(600)
