@@ -16,7 +16,7 @@ while True:
     position_list = api.list_positions()
     position_list_size = len(position_list)
     positions = range(0, position_list_size - 1)
-    while positions > 0:
+    while position_list_size > 0:
       for position in positions:
         ticker = position_list[position].__getattr__('symbol')
         exchange = position_list[position].__getattr__('exchange')
@@ -37,6 +37,7 @@ while True:
             print("Market Sell Order Submitted!")
           except Exception as e:
             print("Market Sell Order Failed!", e)
+      time.sleep(10)
     print("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
   if clock.is_open == 0:
     api.cancel_all_orders()
