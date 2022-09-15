@@ -52,9 +52,9 @@ async def news_data_handler(news):
 	if news.id != previous_id:
 		for ticker in tickers:
 			try:
-				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nasdaq', interval=Interval.INTERVAL_1_HOUR)
-			except Exception as e:
 				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nyse', interval=Interval.INTERVAL_1_HOUR)
+			except Exception as e:
+				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nasdaq', interval=Interval.INTERVAL_1_HOUR)
 			summary = ticker_ta.get_analysis().summary
 			recommendation = summary['RECOMMENDATION']
 			try:
