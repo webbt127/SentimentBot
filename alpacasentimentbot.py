@@ -3,6 +3,7 @@ from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
 import yfinance as yf
 import datetime
+from tradingview_ta import TA_Handler, Interval, Exchange
 
 API_KEY = 'PKVLATR3V44A75JDC07W'
 API_SECRET = 'ngvSepjmymi5Aj0wn13kU6h1ZJyfzfMkQxfDzvmv'
@@ -48,12 +49,18 @@ async def news_data_handler(news):
 	now = (datetime.now(timezone.utc))
 	minutes_to_close = (((market_close - now).seconds)/60)
 
-	if sentiment[0]['label'] != 'neutral' and sentiment[0]['score'] > 0.95 and news.id != previous_id:
+	if news.id != previous_id:
 		for ticker in tickers:
+			try:
+				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nasdaq', interval=Interval.INTERVAL_1_HOUR)
+			except Exception as e:
+				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nyse', interval=Interval.INTERVAL_1_HOUR)
+			summary = ticker_ta.get_analysis().summary
+			recommendation = summary['RECOMMENDATION']
 			try:
 				position = api.get_position(ticker)
 				print("Selling", ticker,"...")
-				if sentiment[0]['label'] == 'negative' and sentiment[0]['score'] > 0.95 and clock.is_open:
+				if (((sentiment[0]['label'] == 'negative' and sentiment[0]['score'] > 0.95) or recommendation == 'SELL' or recommendation == 'STRONG_SELL') and clock.is_open):
 					try:
 						rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='market', time_in_force='gtc')
 						print("Market Sell Order Submitted!")
@@ -63,7 +70,7 @@ async def news_data_handler(news):
 					print("Conditions not sufficient to sell.")
 			except Exception as e:
 				print("Buying", ticker,"...")
-				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and clock.is_open:
+				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and (recommendation == 'BUY' or recommendation == 'STRONG_BUY') and clock.is_open:
 					try:
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
