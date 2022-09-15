@@ -5,8 +5,8 @@ import yfinance as yf
 import datetime
 from tradingview_ta import TA_Handler, Interval, Exchange
 
-API_KEY = 'PKVLATR3V44A75JDC07W'
-API_SECRET = 'ngvSepjmymi5Aj0wn13kU6h1ZJyfzfMkQxfDzvmv'
+API_KEY = 'PKASJ5Y3N7H004MOL0QN'
+API_SECRET = 'PuTN34kuictvukT5yTVIevgRsWoK9o60Dzzsz9Co'
 endpoint = "https://paper-api.alpaca.markets"
 
 print("Loading Machine Learning Model...")
