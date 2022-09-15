@@ -44,7 +44,9 @@ async def news_data_handler(news):
 
 	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
 	clock = api.get_clock()
-	print(datetime(clock.next_close)
+	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
+	now = (datetime.now(timezone.utc))
+	minutes_to_close = (((market_close - now).seconds)/60)
 
 	if sentiment[0]['label'] != 'neutral' and sentiment[0]['score'] > 0.95 and news.id != previous_id:
 		for ticker in tickers:
