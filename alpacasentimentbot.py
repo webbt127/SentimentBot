@@ -52,7 +52,6 @@ async def news_data_handler(news):
 	if news.id != previous_id:
 		for ticker in tickers:
 			stock_info = yf.Ticker(ticker).info
-			print(stock_info)
 			try:
 				ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange='nasdaq', interval=Interval.INTERVAL_1_HOUR)
 			except Exception as e:
