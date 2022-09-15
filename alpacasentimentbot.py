@@ -2,8 +2,7 @@ from alpaca_trade_api import REST, Stream
 from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import alpaca_trade_api as tradeapi
 import yfinance as yf
-from datetime import datetime
-import timezone
+from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
 
 API_KEY = 'PKGHWK2YIALYGDM0L76G'
