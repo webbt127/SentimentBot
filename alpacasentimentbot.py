@@ -94,7 +94,7 @@ def client_thread2():
 				ta = check_ta(ticker, exchange)
 				lg.info(ticker)
 				lg.info(ta)
-				if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
+				if ta == 'SELL' or ta == 'STRONG_SELL':
 					try:
 						rest_client.submit_order(symbol=ticker, qty=position_size.qty, side='buy', type='market', time_in_force='gtc')
 						lg.info("Market Buy Order Submitted!")
