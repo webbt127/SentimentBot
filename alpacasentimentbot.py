@@ -89,6 +89,7 @@ def client_thread():
 threading.Thread(target=client_thread, args=(1,))
 
 while True:
+	clock = rest_client.get_clock()
 	position_list = rest_client.list_positions()
 	position_list_size = len(position_list)
 	positions = range(0, position_list_size - 1)
