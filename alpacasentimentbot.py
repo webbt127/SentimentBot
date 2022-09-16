@@ -6,8 +6,11 @@ from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
 import gvars
+import threading
 
 initialize_logger()
+
+pool = ThreadPoolExecutor(1)
 
 lg.info("Loading Machine Learning Model...")
 model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
@@ -68,7 +71,7 @@ async def news_data_handler(news):
 				lg.info(ticker, "Position Already Exists!")
 			except Exception as e:
 				lg.info("Shorting", ticker,"...")
-				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95:
+				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and clock.is_open:
 					try:
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
@@ -81,10 +84,30 @@ async def news_data_handler(news):
 					lg.info("Conditions not sufficient to short.")
 		previous_id = news.id
 		lg.info("Waiting For Market News...")
+		
+def client_thread():
+	stream_client.subscribe_news(news_data_handler, "*")
+	lg.info("Stream Client Starting, Waiting For Market News...")
+	stream_client.run()
 
+pool.submit(client_thread)
 
-stream_client.subscribe_news(news_data_handler, "*")
-lg.info("Stream Client Starting, Waiting For Market News...")
-stream_client.run()
-exchange = get_exchange(ticker)
-ta = check_ta(ticker, exchange)
+while True:
+	position_list = api.list_positions()
+	position_list_size = len(position_list)
+	positions = range(0, position_list_size - 1)
+	while clock.is_open and position_list_size > 0:
+		for position in positions:
+			ticker = position_list[position].__getattr__('symbol')
+        		exchange = position_list[position].__getattr__('exchange')
+        		position_size = api.get_position(ticker)
+			ta = check_ta(ticker, exchange)
+        		lg.info(ta)
+			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
+          			try:
+            				rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
+            				lg.info("Market Buy Order Submitted!")
+          			except Exception as e:
+            				lg.info("Market Sell Order Failed!", e)
+	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
+	time.sleep(600)
