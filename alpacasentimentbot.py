@@ -87,7 +87,7 @@ def client_thread():
 	lg.info("Stream Client Starting, Waiting For Market News...")
 	stream_client.run()
 
-threadpool = threading.Thread(target=client_thread, args=(1,))
+threadpool = threading.Thread(target=client_thread)
 threadpool.start()
 
 while True:
