@@ -80,27 +80,31 @@ def client_thread():
 	lg.info("Stream Client Starting, Waiting For Market News...")
 	stream_client.run()
 
+def client_thread2():
+	while True:
+		clock = rest_client.get_clock()
+		position_list = rest_client.list_positions()
+		position_list_size = len(position_list)
+		positions = range(0, position_list_size - 1)
+		while clock.is_open and position_list_size > 0:
+			for position in positions:
+				ticker = position_list[position].__getattr__('symbol')
+				exchange = position_list[position].__getattr__('exchange')
+				position_size = rest_client.get_position(ticker)
+				ta = check_ta(ticker, exchange)
+				lg.info(ticker)
+				lg.info(ta)
+				if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
+					try:
+						rest_client.submit_order(symbol=ticker, qty=position_size.qty, side='buy', type='market', time_in_force='gtc')
+						lg.info("Market Buy Order Submitted!")
+					except Exception as e:
+						lg.info("Market Buy Order Failed! %s" % e)
+		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
+		time.sleep(600)
 threadpool = threading.Thread(target=client_thread)
 threadpool.start()
+threadpool2 = threading.Thread(target=client_thread2)
+threadpool2.start()
 threadpool.join()
-while True:
-	clock = rest_client.get_clock()
-	position_list = rest_client.list_positions()
-	position_list_size = len(position_list)
-	positions = range(0, position_list_size - 1)
-	while clock.is_open and position_list_size > 0:
-		for position in positions:
-			ticker = position_list[position].__getattr__('symbol')
-			exchange = position_list[position].__getattr__('exchange')
-			position_size = rest_client.get_position(ticker)
-			ta = check_ta(ticker, exchange)
-			lg.info(ticker)
-			lg.info(ta)
-			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
-				try:
-					rest_client.submit_order(symbol=ticker, qty=position_size.qty, side='buy', type='market', time_in_force='gtc')
-					lg.info("Market Buy Order Submitted!")
-				except Exception as e:
-					lg.info("Market Buy Order Failed! %s" % e)
-	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-	time.sleep(600)
+threadpool2.join()
