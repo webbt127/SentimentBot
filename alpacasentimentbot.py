@@ -101,7 +101,7 @@ def client_thread2():
 				lg.info(ta)
 				if ta == 'BUY' or ta == 'STRONG_BUY':
 					try:
-						rest_client.submit_order(symbol=ticker, qty=qty * -1, side='buy', type='market', time_in_force='gtc')
+						rest_client.submit_order(symbol=ticker, qty=qty, side='buy', type='market', time_in_force='gtc')
 						lg.info("Market Buy Order Submitted!")
 					except Exception as e:
 						lg.info("Market Buy Order Failed! %s" % e)
