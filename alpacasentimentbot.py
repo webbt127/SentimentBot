@@ -90,13 +90,14 @@ def client_thread2():
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
-				position_size = rest_client.get_position(ticker) * -1
+				position_size = rest_client.get_position(ticker)
+				qty = position_size.qty * -1
 				ta = check_ta(ticker, exchange)
 				lg.info(ticker)
 				lg.info(ta)
 				if ta == 'BUY' or ta == 'STRONG_BUY':
 					try:
-						rest_client.submit_order(symbol=ticker, qty=position_size.qty, side='buy', type='market', time_in_force='gtc')
+						rest_client.submit_order(symbol=ticker, qty=qty * -1, side='buy', type='market', time_in_force='gtc')
 						lg.info("Market Buy Order Submitted!")
 					except Exception as e:
 						lg.info("Market Buy Order Failed! %s" % e)
