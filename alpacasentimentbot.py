@@ -82,6 +82,7 @@ def client_thread():
 
 threadpool = threading.Thread(target=client_thread)
 threadpool.start()
+threadpool.join()
 #while True:
 #	clock = rest_client.get_clock()
 #	position_list = rest_client.list_positions()
