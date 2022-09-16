@@ -32,9 +32,10 @@ def check_ta(ticker, exchange):
 
 def get_exchange(ticker):
 	assets = api.list_assets()
-	print(assets[0].symbol)
-	if ticker == assets[0].symbol:
-		return assets[0].exchange
+	indexes = range(0,32100)
+	for index in indexes:
+		if ticker == assets[index].symbol:
+			return assets[index].exchange
 
 async def news_data_handler(news):
 
@@ -62,35 +63,28 @@ async def news_data_handler(news):
 
 	if news.id != previous_id:
 		for ticker in tickers:
-			exchange = get_exchange(ticker)
-			ta = check_ta(ticker, exchange)
-			position = api.get_position(ticker)
-			lg.info("Selling", ticker,"...")
-				if (((sentiment[0]['label'] == 'negative' and sentiment[0]['score'] > 0.95) or recommendation == 'SELL' or recommendation == 'STRONG_SELL') and clock.is_open):
-					try:
-						rest_client.submit_order(symbol=ticker, qty=position.qty, side='sell', type='market', time_in_force='gtc')
-						lg.info("Market Sell Order Submitted!")
-					except Exception as e:
-						lg.info("Market Sell Order Failed!", e)
-				else:
-					lg.info("Conditions not sufficient to sell.")
+			try:
+				position = api.get_position(ticker)
+				lg.info(ticker, "Position Already Exists!")
 			except Exception as e:
-				lg.info("Buying", ticker,"...")
-				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and (recommendation == 'BUY' or recommendation == 'STRONG_BUY') and clock.is_open:
+				lg.info("Shorting", ticker,"...")
+				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95:
 					try:
 						stock_info = yf.Ticker(ticker).info
 						stock_price = stock_info['regularMarketPrice']
-						buy_shares = round(1000/stock_price)
-						rest_client.submit_order(symbol=ticker, qty=buy_shares, side='buy', type='market', time_in_force='gtc')
-						lg.info("Market Buy Order Submitted!")
+						short_shares = round(1000/stock_price)
+						rest_client.submit_order(symbol=ticker, qty=short_shares, side='sell', type='market', time_in_force='gtc')
+						lg.info("Market Short Order Submitted!")
 					except Exception as e:
-						lg.info("Market Buy Order Failed!", e)
+						lg.info("Market Short Order Failed!", e)
 				else:
-					lg.info("Conditions not sufficient to buy.")
+					lg.info("Conditions not sufficient to short.")
+		previous_id = news.id
 		lg.info("Waiting For Market News...")
-	previous_id = news.id
 
 
 stream_client.subscribe_news(news_data_handler, "*")
 lg.info("Stream Client Starting, Waiting For Market News...")
 stream_client.run()
+exchange = get_exchange(ticker)
+ta = check_ta(ticker, exchange)
