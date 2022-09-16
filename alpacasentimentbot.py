@@ -97,7 +97,7 @@ while True:
 			lg.info(ta)
 			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
 				try:
-					rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
+					rest_client.submit_order(symbol=ticker, qty=position_size.qty*, side='buy', type='market', time_in_force='gtc')
 					lg.info("Market Buy Order Submitted!")
 				except Exception as e:
 					lg.info("Market Buy Order Failed!", e)
