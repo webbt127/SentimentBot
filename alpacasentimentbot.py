@@ -1,6 +1,5 @@
 from alpaca_trade_api import REST, Stream
 from transformers import pipeline, BertTokenizer, BertForSequenceClassification
-import alpaca_trade_api as tradeapi
 import yfinance as yf
 from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
@@ -32,7 +31,7 @@ def check_ta(ticker, exchange):
 	return recommendation
 
 def get_exchange(ticker):
-	assets = api.list_assets()
+	assets = rest_client.list_assets()
 	indexes = range(0,32100)
 	for index in indexes:
 		if ticker == assets[index].symbol:
@@ -56,8 +55,7 @@ async def news_data_handler(news):
 	else:
 		lg.info("Duplicate ID, skipping...")
 
-	api = tradeapi.REST(API_KEY, API_SECRET, endpoint)
-	clock = api.get_clock()
+	clock = rest_client.get_clock()
 	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
 	now = (datetime.now(timezone.utc))
 	minutes_to_close = (((market_close - now).seconds)/60)
@@ -65,7 +63,7 @@ async def news_data_handler(news):
 	if news.id != previous_id:
 		for ticker in tickers:
 			try:
-				position = api.get_position(ticker)
+				position = rest_client.get_position(ticker)
 				lg.info(ticker, "Position Already Exists!")
 			except Exception as e:
 				lg.info("Shorting", ticker,"...")
@@ -91,14 +89,14 @@ def client_thread():
 threading.Thread(target=client_thread, args=(1,))
 
 while True:
-	position_list = api.list_positions()
+	position_list = rest_client.list_positions()
 	position_list_size = len(position_list)
 	positions = range(0, position_list_size - 1)
 	while clock.is_open and position_list_size > 0:
 		for position in positions:
 			ticker = position_list[position].__getattr__('symbol')
 			exchange = position_list[position].__getattr__('exchange')
-			position_size = api.get_position(ticker)
+			position_size = rest_client.get_position(ticker)
 			ta = check_ta(ticker, exchange)
 			lg.info(ta)
 			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
