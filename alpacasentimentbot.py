@@ -60,7 +60,7 @@ async def news_data_handler(news):
 				position = rest_client.get_position(ticker)
 				lg.info(ticker, "Position Already Exists!")
 			except Exception as e:
-				lg.info("Shorting", ticker,"...")
+				lg.info("Shorting...")
 				stock_info = yf.Ticker(ticker).info
 				stock_price = stock_info['regularMarketPrice']
 				short_shares = round(1000/stock_price)
@@ -69,7 +69,7 @@ async def news_data_handler(news):
 						rest_client.submit_order(symbol=ticker, qty=short_shares, side='sell', type='market', time_in_force='gtc')
 						lg.info("Market Short Order Submitted!")
 					except Exception as e:
-						lg.info("Market Short Order Failed!", e)
+						lg.info("Market Short Order Failed!")
 				else:
 					lg.info("Conditions not sufficient to short.")
 		previous_id = news.id
@@ -100,6 +100,6 @@ while True:
 					rest_client.submit_order(symbol=ticker, qty=position_size.qty*, side='buy', type='market', time_in_force='gtc')
 					lg.info("Market Buy Order Submitted!")
 				except Exception as e:
-					lg.info("Market Buy Order Failed!", e)
+					lg.info("Market Buy Order Failed!")
 	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 	time.sleep(600)
