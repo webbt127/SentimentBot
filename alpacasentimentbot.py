@@ -60,7 +60,7 @@ async def news_data_handler(news):
 				position = rest_client.get_position(ticker)
 				lg.info("%s Position Already Exists!" % ticker)
 			except Exception as e:
-				lg.info("Shorting...")
+				lg.info("Shorting %s..." % ticker)
 				stock_info = yf.Ticker(ticker).info
 				stock_price = stock_info['regularMarketPrice']
 				short_shares = round(1000/stock_price)
@@ -71,7 +71,7 @@ async def news_data_handler(news):
 					except Exception as e:
 						lg.info("Market Short Order Failed! %s" % e)
 				else:
-					lg.info("Conditions not sufficient to short.")
+					lg.info("Conditions not sufficient to short %s." % ticker)
 		previous_id = news.id
 		lg.info("Waiting For Market News...")
 		
