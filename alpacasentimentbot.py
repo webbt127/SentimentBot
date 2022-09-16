@@ -99,15 +99,15 @@ while True:
 	while clock.is_open and position_list_size > 0:
 		for position in positions:
 			ticker = position_list[position].__getattr__('symbol')
-        		exchange = position_list[position].__getattr__('exchange')
-        		position_size = api.get_position(ticker)
+			exchange = position_list[position].__getattr__('exchange')
+			position_size = api.get_position(ticker)
 			ta = check_ta(ticker, exchange)
-        		lg.info(ta)
+			lg.info(ta)
 			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
-          			try:
-            				rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
-            				lg.info("Market Buy Order Submitted!")
-          			except Exception as e:
-            				lg.info("Market Sell Order Failed!", e)
+				try:
+					rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
+					lg.info("Market Buy Order Submitted!")
+				except Exception as e:
+					lg.info("Market Sell Order Failed!", e)
 	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 	time.sleep(600)
