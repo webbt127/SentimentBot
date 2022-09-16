@@ -87,6 +87,10 @@ def client_thread2():
 		position_list_size = len(position_list)
 		positions = range(0, position_list_size - 1)
 		while clock.is_open and position_list_size > 0:
+			clock = rest_client.get_clock()
+			position_list = rest_client.list_positions()
+			position_list_size = len(position_list)
+			positions = range(0, position_list_size - 1)
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
