@@ -31,13 +31,6 @@ def check_ta(ticker, exchange):
 	recommendation = summary['RECOMMENDATION']
 	return recommendation
 
-def get_exchange(ticker):
-	assets = rest_client.list_assets()
-	indexes = range(0,32100)
-	for index in indexes:
-		if ticker == assets[index].symbol:
-			return assets[index].exchange
-
 async def news_data_handler(news):
 
 	summary = news.summary
@@ -89,7 +82,6 @@ def client_thread():
 
 threadpool = threading.Thread(target=client_thread)
 threadpool.start()
-
 while True:
 	clock = rest_client.get_clock()
 	position_list = rest_client.list_positions()
@@ -107,6 +99,6 @@ while True:
 					rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
 					lg.info("Market Buy Order Submitted!")
 				except Exception as e:
-					lg.info("Market Sell Order Failed!", e)
+					lg.info("Market Buy Order Failed!", e)
 	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 	time.sleep(600)
