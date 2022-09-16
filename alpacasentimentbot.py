@@ -100,6 +100,7 @@ def client_thread2():
 						lg.info("Market Buy Order Submitted!")
 					except Exception as e:
 						lg.info("Market Buy Order Failed! %s" % e)
+			time.sleep(60)
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(600)
 threadpool = threading.Thread(target=client_thread)
