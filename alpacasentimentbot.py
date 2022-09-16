@@ -61,11 +61,11 @@ async def news_data_handler(news):
 				lg.info(ticker, "Position Already Exists!")
 			except Exception as e:
 				lg.info("Shorting", ticker,"...")
+				stock_info = yf.Ticker(ticker).info
+				stock_price = stock_info['regularMarketPrice']
+				short_shares = round(1000/stock_price)
 				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and clock.is_open:
 					try:
-						stock_info = yf.Ticker(ticker).info
-						stock_price = stock_info['regularMarketPrice']
-						short_shares = round(1000/stock_price)
 						rest_client.submit_order(symbol=ticker, qty=short_shares, side='sell', type='market', time_in_force='gtc')
 						lg.info("Market Short Order Submitted!")
 					except Exception as e:
@@ -82,23 +82,23 @@ def client_thread():
 
 threadpool = threading.Thread(target=client_thread)
 threadpool.start()
-while True:
-	clock = rest_client.get_clock()
-	position_list = rest_client.list_positions()
-	position_list_size = len(position_list)
-	positions = range(0, position_list_size - 1)
-	while clock.is_open and position_list_size > 0:
-		for position in positions:
-			ticker = position_list[position].__getattr__('symbol')
-			exchange = position_list[position].__getattr__('exchange')
-			position_size = rest_client.get_position(ticker)
-			ta = check_ta(ticker, exchange)
-			lg.info(ta)
-			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
-				try:
-					rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
-					lg.info("Market Buy Order Submitted!")
-				except Exception as e:
-					lg.info("Market Buy Order Failed!", e)
-	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-	time.sleep(600)
+#while True:
+#	clock = rest_client.get_clock()
+#	position_list = rest_client.list_positions()
+#	position_list_size = len(position_list)
+#	positions = range(0, position_list_size - 1)
+#	while clock.is_open and position_list_size > 0:
+#		for position in positions:
+#			ticker = position_list[position].__getattr__('symbol')
+#			exchange = position_list[position].__getattr__('exchange')
+#			position_size = rest_client.get_position(ticker)
+#			ta = check_ta(ticker, exchange)
+#			lg.info(ta)
+#			if recommendation == 'SELL' or recommendation == 'STRONG_SELL':
+#				try:
+#					rest_client.submit_order(symbol=ticker, qty=position_size.qty*-1, side='buy', type='market', time_in_force='gtc')
+#					lg.info("Market Buy Order Submitted!")
+#				except Exception as e:
+#					lg.info("Market Buy Order Failed!", e)
+#	lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
+#	time.sleep(600)
