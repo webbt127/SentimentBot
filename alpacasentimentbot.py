@@ -7,6 +7,7 @@ from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
 import gvars
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 initialize_logger()
 
