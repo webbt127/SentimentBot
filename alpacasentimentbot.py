@@ -90,11 +90,11 @@ def client_thread2():
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
-				position_size = rest_client.get_position(ticker)
+				position_size = rest_client.get_position(ticker) * -1
 				ta = check_ta(ticker, exchange)
 				lg.info(ticker)
 				lg.info(ta)
-				if ta == 'SELL' or ta == 'STRONG_SELL':
+				if ta == 'BUY' or ta == 'STRONG_BUY':
 					try:
 						rest_client.submit_order(symbol=ticker, qty=position_size.qty, side='buy', type='market', time_in_force='gtc')
 						lg.info("Market Buy Order Submitted!")
