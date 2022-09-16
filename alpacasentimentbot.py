@@ -7,11 +7,8 @@ from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
 import gvars
 import threading
-from concurrent.futures import ThreadPoolExecutor
 
 initialize_logger()
-
-pool = ThreadPoolExecutor(1)
 
 lg.info("Loading Machine Learning Model...")
 model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
@@ -91,7 +88,7 @@ def client_thread():
 	lg.info("Stream Client Starting, Waiting For Market News...")
 	stream_client.run()
 
-pool.submit(client_thread)
+threading.Thread(target=client_thread, args=(1,))
 
 while True:
 	position_list = api.list_positions()
