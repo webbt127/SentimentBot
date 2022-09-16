@@ -6,6 +6,7 @@ from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
 import gvars
 import threading
+import time
 
 initialize_logger()
 
