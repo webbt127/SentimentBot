@@ -95,8 +95,8 @@ def client_thread2():
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
 				position_size = rest_client.get_position(ticker)
-				qty = position_size.qty * -1
-				print(position_size)
+				qty = int(position_size.qty) * -1
+				print(qty)
 				ta = check_ta(ticker, exchange)
 				lg.info(ticker)
 				lg.info(ta)
