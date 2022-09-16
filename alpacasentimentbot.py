@@ -87,7 +87,8 @@ def client_thread():
 	lg.info("Stream Client Starting, Waiting For Market News...")
 	stream_client.run()
 
-threading.Thread(target=client_thread, args=(1,))
+threadpool = threading.Thread(target=client_thread, args=(1,))
+threadpool.start()
 
 while True:
 	clock = rest_client.get_clock()
