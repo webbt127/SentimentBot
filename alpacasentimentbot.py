@@ -94,7 +94,7 @@ def get_positions():
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
 		
-def get_clock():
+def get_clock(rest_client):
 	clock = rest_client.get_clock()
 	
 def get_ticker_position(ticker):
@@ -150,7 +150,7 @@ def main():
 	load_model()
 
 	previous_id = 0 # initialize duplicate ID check storage
-	get_clock() # initialize time check
+	get_clock(rest_client) # initialize time check
 	get_positions() # check existing positions before iterating
 	
 	begin_threading()
