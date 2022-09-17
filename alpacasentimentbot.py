@@ -109,10 +109,6 @@ def load_model():
 	classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 	lg.info("Machine Learning Model Loaded!")
 	
-def initialize_clients():
-	stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
-	rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
-	
 def submit_buy_order(ticker, buy_qty):
 	try:
 		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc')
@@ -148,7 +144,8 @@ def analysis_thread():
 def main():
 	initialize_logger()
 	
-	initialize_clients()
+	stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
+	rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 	load_model()
 
