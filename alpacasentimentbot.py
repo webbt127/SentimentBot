@@ -87,6 +87,8 @@ def analysis_thread():
 def main():
 	initialize_logger()
 	
+	initialize_clients()
+	
 	load_model()
 
 	previous_id = 0 # initialize duplicate ID check storage
