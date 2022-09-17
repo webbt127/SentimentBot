@@ -91,6 +91,7 @@ def get_positions():
 		position_list = rest_client.list_positions()
 		position_list_size = len(position_list)
 		positions = range(0, position_list_size - 1)
+		return positions
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
 		
@@ -108,6 +109,7 @@ def load_model():
 	tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
 	classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 	lg.info("Machine Learning Model Loaded!")
+	return classifier
 	
 def submit_buy_order(ticker, buy_qty):
 	try:
@@ -125,9 +127,10 @@ def submit_sell_order(ticker, sell_qty):
 	
 def analysis_thread():
 	while True:
+		clock = get_clock()
 		while clock.is_open and position_list_size > 0:
-			get_clock()
-			get_positions()
+			clock = get_clock()
+			positions = get_positions()
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
