@@ -8,6 +8,20 @@ import gvars
 import threading
 import time
 
+initialize_logger()
+
+lg.info("Loading Machine Learning Model...")
+model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
+tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
+lg.info("Machine Learning Model Loaded!")
+
+lg.info("Loading Classifier...")
+classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
+stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
+rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
+lg.info("Classifier Loaded!")
+previous_id = 0
+
 def check_ta(ticker, exchange):
 	try:
 		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
@@ -61,68 +75,43 @@ async def news_data_handler(news):
 		previous_id = news.id
 		lg.info("Waiting For Market News...")
 		
-def news_thread():
+def client_thread():
 	stream_client.subscribe_news(news_data_handler, "*")
 	lg.info("Stream Client Starting, Waiting For Market News...")
 	stream_client.run()
-	
-def begin_threading():
-	thread1 = threading.Thread(target=news_thread)
-	thread1.start()
-	thread1.join()
-	thread2 = threading.Thread(target=analysis_thread)
-	thread2.start()
-	thread2.join()
 
-def analysis_thread():
+def client_thread2():
 	while True:
-		position_list_size = 0
-		try:
+		clock = rest_client.get_clock()
+		position_list = rest_client.list_positions()
+		position_list_size = len(position_list)
+		positions = range(0, position_list_size - 1)
+		while clock.is_open and position_list_size > 0:
+			clock = rest_client.get_clock()
 			position_list = rest_client.list_positions()
 			position_list_size = len(position_list)
 			positions = range(0, position_list_size - 1)
-		except Exception as e:
-			lg.info("No Positions to Analyze!")
-		clock = rest_client.get_clock()
-		while clock.is_open and position_list_size > 0:
-			clock = rest_client.get_clock()
-			try:
-				position_list = rest_client.list_positions()
-				position_list_size = len(position_list)
-				positions = range(0, position_list_size - 1)
-				for position in positions:
-					ticker = position_list[position].__getattr__('symbol')
-					exchange = position_list[position].__getattr__('exchange')
-					position_size = rest_client.get_position(ticker)
-					sell_qty = int(position_size.qty)
-					ta = check_ta(ticker, exchange)
-					if ta == 'STRONG_SELL':
-						try:
-							rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc')
-							lg.info("Market Buy Order Submitted for %s!" % ticker)
-						except Exception as e:
-							lg.info("Market Buy Order Failed! %s" % e)
-			except Exception as e:
-				lg.info("No Remaining Positions to Analyze!")
+			for position in positions:
+				ticker = position_list[position].__getattr__('symbol')
+				exchange = position_list[position].__getattr__('exchange')
+				position_size = rest_client.get_position(ticker)
+				qty = int(position_size.qty) * -1
+				print(qty)
+				ta = check_ta(ticker, exchange)
+				lg.info(ticker)
+				lg.info(ta)
+				if ta == 'BUY' or ta == 'STRONG_BUY':
+					try:
+						rest_client.submit_order(symbol=ticker, qty=qty, side='buy', type='market', time_in_force='gtc')
+						lg.info("Market Buy Order Submitted!")
+					except Exception as e:
+						lg.info("Market Buy Order Failed! %s" % e)
 			time.sleep(60)
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(600)
-def main():
-	
-	initialize_logger()
-
-	lg.info("Loading Machine Learning Model...")
-	model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
-	tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
-	lg.info("Machine Learning Model Loaded!")
-
-	lg.info("Loading Classifier...")
-	classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
-	stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
-	rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
-	lg.info("Classifier Loaded!")
-	previous_id = 0
-	begin_threading()
-	
-if __name__ == '__main__':
-	main()
+threadpool = threading.Thread(target=client_thread)
+threadpool.start()
+threadpool2 = threading.Thread(target=client_thread2)
+threadpool2.start()
+threadpool.join()
+threadpool2.join()
