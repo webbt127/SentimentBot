@@ -150,7 +150,7 @@ def main():
 	load_model()
 
 	previous_id = 0 # initialize duplicate ID check storage
-	get_clock(rest_client) # initialize time check
+	clock = get_clock(rest_client) # initialize time check
 	get_positions() # check existing positions before iterating
 	
 	begin_threading()
