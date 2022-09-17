@@ -3,7 +3,10 @@ from transformers import pipeline, BertTokenizer, BertForSequenceClassification
 import yfinance as yf
 from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
+from logger import *
+from helper_functions import *
 import gvars
+import threading
 import time
 
 def check_ta(ticker, exchange):
