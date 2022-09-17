@@ -67,6 +67,6 @@ def load_model():
 	classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 	lg.info("Machine Learning Model Loaded!")
 	
-def init_clients():
+def initialize_clients():
 	stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
 	rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
