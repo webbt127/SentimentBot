@@ -8,16 +8,6 @@ import gvars
 import threading
 import time
 
-initialize_logger()
-	
-stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
-rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
-	
-load_model()
-
-previous_id = 0 # initialize duplicate ID check storage
-clock = get_clock(rest_client) # initialize time check
-get_positions() # check existing positions before iterating
 
 def check_ta(ticker, exchange):
 	try:
@@ -152,9 +142,19 @@ def analysis_thread():
 			time.sleep(60)
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(600)
-def main():
-	
+def main():	
 	begin_threading()
+	
+initialize_logger()
+	
+stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
+rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
+	
+load_model()
+
+previous_id = 0 # initialize duplicate ID check storage
+clock = get_clock(rest_client) # initialize time check
+get_positions() # check existing positions before iterating
 	
 if __name__ == '__main__':
 	main()
