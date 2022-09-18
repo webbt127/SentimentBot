@@ -109,9 +109,14 @@ def client_thread2():
 			time.sleep(60)
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(600)
-threadpool = threading.Thread(target=client_thread)
-threadpool.start()
-threadpool2 = threading.Thread(target=client_thread2)
-threadpool2.start()
-threadpool.join()
-threadpool2.join()
+		
+def main():
+	threadpool = threading.Thread(target=client_thread)
+	threadpool.start()
+	threadpool2 = threading.Thread(target=client_thread2)
+	threadpool2.start()
+	threadpool.join()
+	threadpool2.join()
+
+if __name__ == '__main__':
+	main()
