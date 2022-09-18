@@ -4,6 +4,7 @@ import yfinance as yf
 from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
+from helper_functions import *
 import gvars
 import threading
 import time
@@ -37,7 +38,7 @@ async def news_data_handler(news):
 	
 	log_news()
 
-	get_clock()
+	clock = get_clock()
 
 	if news.id != previous_id:
 		for ticker in tickers:
@@ -46,7 +47,7 @@ async def news_data_handler(news):
 				lg.info("%s Position Already Exists!" % ticker)
 			except Exception as e:
 				lg.info("Buying %s..." % ticker)
-				get_price(ticker)
+				stock_price = get_price(ticker)
 				new_qty = round(1000/stock_price)
 				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and clock.is_open:
 					submit_buy_order(ticker, new_qty)
@@ -124,14 +125,14 @@ def submit_buy_order(ticker, buy_qty):
 def submit_sell_order(ticker, sell_qty):
 	try:
 		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc')
-		lg.info("Market Short Order Submitted!")
+		lg.info("Market Sell Order Submitted!")
 	except Exception as e:
-		lg.info("Market Short Order Failed! %s" % e)
+		lg.info("Market Sell Order Failed! %s" % e)
 	
 def analysis_thread():
 	while True:
 		positions, position_list_size, position_list = get_positions()
-		while position_list_size > 0: # and clock.is_open:
+		while position_list_size > 0 and clock.is_open:
 			clock = get_clock()
 			positions, position_list_size, position_list = get_positions()
 			for position in positions:
