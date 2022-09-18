@@ -92,6 +92,7 @@ def get_positions():
 		position_list = rest_client.list_positions()
 		position_list_size = len(position_list)
 		positions = range(0, position_list_size - 1)
+		return positions
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
 		
@@ -109,6 +110,7 @@ def load_model():
 	tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
 	classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 	lg.info("Machine Learning Model Loaded!")
+	return classifier
 	
 def submit_buy_order(ticker, buy_qty):
 	try:
@@ -126,9 +128,9 @@ def submit_sell_order(ticker, sell_qty):
 	
 def analysis_thread():
 	while True:
-		while clock.is_open and position_list_size > 0:
-			get_clock()
-			get_positions()
+		while position_list_size > 0: # and clock.is_open:
+			clock = get_clock()
+			positions = get_positions()
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
@@ -150,11 +152,11 @@ initialize_logger()
 stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
 rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
-load_model()
+classifier = load_model()
 
 previous_id = 0 # initialize duplicate ID check storage
 clock = get_clock() # initialize time check
-get_positions() # check existing positions before iterating
+positions = get_positions() # check existing positions before iterating
 	
 if __name__ == '__main__':
 	main()
