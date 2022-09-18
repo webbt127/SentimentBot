@@ -58,11 +58,13 @@ async def news_data_handler(news):
 def get_price(ticker):
 	stock_info = yf.Ticker(ticker).info
 	stock_price = stock_info['regularMarketPrice']
+	return stock_price
 	
 def minutes_to_close():
 	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
 	now = (datetime.now(timezone.utc))
 	minutes_to_close = (((market_close - now).seconds)/60)
+	return minutes_to_close
 	
 def log_news():
 	if previous_id != news.id:
@@ -145,9 +147,9 @@ def analysis_thread():
 			time.sleep(60)
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(600)
-def main():	
-	begin_threading()
 	
+
+###################INITIALIZATIONS AND RUN MAIN LOOP###################	
 initialize_logger()
 	
 stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
@@ -158,6 +160,5 @@ classifier = load_model()
 previous_id = 0 # initialize duplicate ID check storage
 clock = get_clock() # initialize time check
 positions = get_positions() # check existing positions before iterating
-	
-if __name__ == '__main__':
-	main()
+
+begin_threading()
