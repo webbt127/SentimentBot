@@ -92,7 +92,7 @@ def get_positions():
 		position_list = rest_client.list_positions()
 		position_list_size = len(position_list)
 		positions = range(0, position_list_size - 1)
-		return positions
+		return positions, position_list_size, position_list
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
 		
@@ -128,9 +128,10 @@ def submit_sell_order(ticker, sell_qty):
 	
 def analysis_thread():
 	while True:
+		positions, position_list_size, position_list = get_positions()
 		while position_list_size > 0: # and clock.is_open:
 			clock = get_clock()
-			positions = get_positions()
+			positions, position_list_size, position_list = get_positions()
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
