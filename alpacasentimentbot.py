@@ -132,9 +132,8 @@ def submit_sell_order(ticker, sell_qty):
 def analysis_thread():
 	while True:
 		positions, position_list_size, position_list = get_positions()
+		clock = get_clock()
 		while position_list_size > 0 and clock.is_open:
-			clock = get_clock()
-			positions, position_list_size, position_list = get_positions()
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
@@ -146,6 +145,8 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
 					
 			time.sleep(60)
+			clock = get_clock()
+			positions, position_list_size, position_list = get_positions()
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(600)
 	
