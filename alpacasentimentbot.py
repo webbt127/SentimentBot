@@ -81,10 +81,10 @@ def news_thread():
 	
 def begin_threading():
 	thread1 = threading.Thread(target=news_thread)
-	thread1.start()
-	thread1.join()
 	thread2 = threading.Thread(target=analysis_thread)
+	thread1.start()
 	thread2.start()
+	thread1.join()
 	thread2.join()
 	
 def get_positions():
