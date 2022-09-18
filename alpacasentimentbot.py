@@ -49,7 +49,7 @@ async def news_data_handler(news):
 				lg.info("Buying %s..." % ticker)
 				stock_price = get_price(ticker)
 				new_qty = round(1000/stock_price)
-				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.95 and clock.is_open:
+				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.99 and clock.is_open:
 					submit_buy_order(ticker, new_qty)
 				else:
 					lg.info("Conditions not sufficient to buy %s." % ticker)
@@ -139,7 +139,7 @@ def analysis_thread():
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
-				if ta == 'STRONG_BUY':
+				if ta == 'STRONG_SELL':
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
