@@ -135,7 +135,7 @@ def analysis_thread():
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
-				current_qty = get_ticker_position()
+				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
 				if ta == 'STRONG_BUY':
 					submit_sell_order(ticker, current_qty)
