@@ -8,20 +8,6 @@ import gvars
 import threading
 import time
 
-initialize_logger()
-
-lg.info("Loading Machine Learning Model...")
-model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
-tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
-lg.info("Machine Learning Model Loaded!")
-
-lg.info("Loading Classifier...")
-classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
-stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
-rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
-lg.info("Classifier Loaded!")
-previous_id = 0
-
 def check_ta(ticker, exchange):
 	try:
 		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
@@ -111,6 +97,20 @@ def client_thread2():
 		time.sleep(600)
 		
 def main():
+	initialize_logger()
+
+	lg.info("Loading Machine Learning Model...")
+	model = BertForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis",num_labels=3)
+	tokenizer = BertTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
+	lg.info("Machine Learning Model Loaded!")
+
+	lg.info("Loading Classifier...")
+	classifier = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
+	stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
+	rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
+	lg.info("Classifier Loaded!")
+	previous_id = 0
+	
 	threadpool = threading.Thread(target=client_thread)
 	threadpool.start()
 	threadpool2 = threading.Thread(target=client_thread2)
