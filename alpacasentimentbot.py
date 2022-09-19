@@ -61,7 +61,7 @@ def get_price(ticker):
 	stock_price = stock_info['regularMarketPrice']
 	return stock_price
 	
-def minutes_to_close():
+def minutes_to_close(clock):
 	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
 	now = (datetime.now(timezone.utc))
 	minutes_to_close = (((market_close - now).seconds)/60)
