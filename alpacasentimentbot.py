@@ -29,7 +29,7 @@ def apewisdom_sentiment(ticker):
 	
 	news_table = {}
 	html = BeautifulSoup(response, features="html.parser")
-	news_table = html.find(id='details-small-tile')
+	news_table = html.select(div.details-small-tile:nth-child(4) > div:nth-child(2))
 	lg.info(news_table)
 
 
@@ -147,7 +147,7 @@ def analysis_thread():
 	while True:
 		positions, position_list_size, position_list = get_positions()
 		clock = get_clock()
-		while position_list_size > 0 and clock.is_open:
+		while position_list_size > 0: # and clock.is_open:
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
