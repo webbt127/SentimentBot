@@ -147,7 +147,7 @@ def analysis_thread():
 	while True:
 		positions, position_list_size, position_list = get_positions()
 		clock = get_clock()
-		while position_list_size > 0: # and clock.is_open:
+		while position_list_size > 0 and clock.is_open:
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
@@ -176,5 +176,5 @@ classifier = load_model()
 previous_id = 0 # initialize duplicate ID check storage
 clock = get_clock() # initialize time check
 positions = get_positions() # check existing positions before iterating
-apewisdom_sentiment('GME')
+#apewisdom_sentiment('GME')
 begin_threading()
