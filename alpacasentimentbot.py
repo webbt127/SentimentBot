@@ -24,12 +24,12 @@ def check_ta(ticker, exchange):
 def apewisdom_sentiment(ticker):
 	apewisdom_url = "https://apewisdom.io/stocks/"
 	url = apewisdom_url + ticker
-        req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
-        response = urlopen(req)
+	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
+	response = urlopen(req)
 	
 	news_table = {}
-        html = BeautifulSoup(response, features="html.parser")
-        news_table = html.find(id='details-tile')
+	html = BeautifulSoup(response, features="html.parser")
+	news_table = html.find(id='details-tile')
 	lg.info(news_table)
 
 
