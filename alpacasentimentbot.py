@@ -50,7 +50,7 @@ async def news_data_handler(news):
 	relevant_text = summary + headline
 	sentiment = classifier(relevant_text)
 	
-	log_news(news, sentiment, previous_id)
+	log_news(news, sentiment, previous_id, tickers)
 
 	clock = get_clock()
 
@@ -81,7 +81,7 @@ def minutes_to_close(clock):
 	minutes_to_close = (((market_close - now).seconds)/60)
 	return minutes_to_close
 	
-def log_news(news, sentiment, previous_id):
+def log_news(news, sentiment, previous_id, tickers):
 	if previous_id != news.id:
 		lg.info("News Event for %s" % tickers)
 		lg.info(relevant_text)
