@@ -29,7 +29,7 @@ def apewisdom_sentiment(ticker):
 	
 	news_table = {}
 	html = BeautifulSoup(response, features="html.parser")
-	news_table = html.select(div.details-small-tile:nth-child(4) > div:nth-child(2))
+	news_table = html.select('div.details-small-tile:nth-child(4) > div:nth-child(2)')
 	lg.info(news_table)
 
 
