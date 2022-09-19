@@ -22,7 +22,7 @@ def check_ta(ticker, exchange):
 		lg.info("Unable To Find %s TA!" % ticker)
 		
 def apewisdom_sentiment(ticker):
-	apewisdom_url = https://apewisdom.io/stocks/
+	apewisdom_url = "https://apewisdom.io/stocks/"
 	url = apewisdom_url + ticker
         req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
         response = urlopen(req)
