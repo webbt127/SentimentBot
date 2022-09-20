@@ -27,10 +27,19 @@ def apewisdom_sentiment(ticker):
 	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
 	response = urlopen(req)
 	
-	news_table = {}
 	html = BeautifulSoup(response, features="html.parser")
-	news_table = html.select('div.details-small-tile:nth-child(4) > div:nth-child(2)')
-	lg.info(news_table)
+        strings = html.find_all('div', {'class':'tile-value'})
+        index = 0
+        percentages = [None] * 5
+        for string in strings:
+                storage = string.text
+                percentages[index] = storage
+                index = index + 1
+	try:
+        	reddit_sentiment = int(percentages[3].strip('% '))
+        	return reddit_sentiment
+	except Exception as e:
+		lg.info("No Percentage Available for %s" % ticker)
 
 
 def find_exchange(ticker):
