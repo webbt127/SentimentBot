@@ -72,10 +72,14 @@ async def news_data_handler(news):
 				lg.info("Buying %s..." % ticker)
 				stock_price = get_price(ticker)
 				new_qty = round(1000/stock_price)
-				if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.99 and clock.is_open:
-					submit_buy_order(ticker, new_qty)
-				else:
-					lg.info("Conditions not sufficient to buy %s." % ticker)
+				try:
+					reddit_sentiment = apewisdom_sentiment(ticker)
+					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.99 and reddit_sentiment > 60 and clock.is_open:
+						submit_buy_order(ticker, new_qty)
+					else:
+						lg.info("Conditions not sufficient to buy %s." % ticker)
+				except Exception as e:
+					lg.info("Unable To Analyze Reddit Sentiment for %s" % ticker)
 		previous_id = news.id
 		lg.info("Waiting For Market News...")
 		
@@ -162,7 +166,8 @@ def analysis_thread():
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
-				if ta == 'STRONG_SELL':
+				reddit_sentiment = apewisdom_sentiment(ticker)
+				if ta == 'STRONG_SELL' or reddit_sentiment < 50:
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
@@ -185,5 +190,4 @@ classifier = load_model()
 previous_id = 0 # initialize duplicate ID check storage
 clock = get_clock() # initialize time check
 positions = get_positions() # check existing positions before iterating
-#apewisdom_sentiment('GME')
 begin_threading()
