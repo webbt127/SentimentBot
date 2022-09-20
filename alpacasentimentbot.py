@@ -28,16 +28,16 @@ def apewisdom_sentiment(ticker):
 	response = urlopen(req)
 	
 	html = BeautifulSoup(response, features="html.parser")
-        strings = html.find_all('div', {'class':'tile-value'})
-        index = 0
-        percentages = [None] * 5
-        for string in strings:
-                storage = string.text
-                percentages[index] = storage
-                index = index + 1
+	strings = html.find_all('div', {'class':'tile-value'})
+	index = 0
+	percentages = [None] * 5
+	for string in strings:
+		storage = string.text
+		percentages[index] = storage
+		index = index + 1
 	try:
-        	reddit_sentiment = int(percentages[3].strip('% '))
-        	return reddit_sentiment
+		reddit_sentiment = int(percentages[3].strip('% '))
+		return reddit_sentiment
 	except Exception as e:
 		lg.info("No Percentage Available for %s" % ticker)
 
