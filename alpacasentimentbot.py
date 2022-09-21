@@ -42,7 +42,7 @@ def apewisdom_sentiment(ticker):
 
 
 def find_exchange(ticker):
-	assets = api.list_assets()
+	assets = rest_client.list_assets()
 	indexes = range(0,32100)
 	for index in indexes:
 		if ticker == assets[index].symbol:
