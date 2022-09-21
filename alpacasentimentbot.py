@@ -195,10 +195,10 @@ def analysis_thread():
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-		for total in gvars.market_sleep_time:
+		for total in 600000:
 			with alive_bar(total) as bar:
-				for _ in range(gvars.market_sleep_time):
-					time.sleep(1)
+				for _ in range(600000):
+					time.sleep(.001)
 					bar()
 	
 
