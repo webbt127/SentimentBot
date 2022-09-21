@@ -196,7 +196,7 @@ def analysis_thread():
 	while True:
 		positions, position_list_size, position_list = get_positions()
 		market_open = check_market_availability()
-		while position_list_size > 0 and market_open:
+		while market_open:
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
@@ -211,11 +211,14 @@ def analysis_thread():
 			time.sleep(gvars.loop_sleep_time)
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
-		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-		with alive_bar(gvars.market_sleep_time) as bar:
-			for _ in range(gvars.market_sleep_time):
-				time.sleep(.1)
-				bar()
+		lg.info("Market is Closed, Sleeping...")
+		seconds_to_close = minutes_to_close() * 60
+		if seconds_to_close < 72000 or seconds_to_close > 43200:
+			sleep_length = seconds_to_close - 43200
+			with alive_bar(sleep_length) as bar:
+				for _ in range(sleep_length):
+					time.sleep(1)
+					bar()
 	
 
 ###################INITIALIZATIONS AND RUN MAIN LOOP###################	
