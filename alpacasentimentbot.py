@@ -20,6 +20,7 @@ def check_ta(ticker, exchange):
 		return recommendation
 	except Exception as e:
 		lg.info("Unable To Find %s TA!" % ticker)
+		return ""
 		
 def apewisdom_sentiment(ticker):
 	apewisdom_url = "https://apewisdom.io/stocks/"
@@ -40,6 +41,7 @@ def apewisdom_sentiment(ticker):
 		return reddit_sentiment
 	except Exception as e:
 		lg.info("No Percentage Available for %s" % ticker)
+		return 0
 
 
 def find_exchange(ticker):
@@ -48,6 +50,7 @@ def find_exchange(ticker):
 	for index in indexes:
 		if ticker == assets[index].symbol:
 			return assets[index].exchange
+	return ""
 		
 def check_market_availability():
 
@@ -87,7 +90,7 @@ async def news_data_handler(news):
 				ta = check_ta(ticker, exchange)
 				try:
 					reddit_sentiment = apewisdom_sentiment(ticker)
-					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open:
+					if reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open: #sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and
 						submit_buy_order(ticker, new_qty)
 					else:
 						lg.info("Conditions not sufficient to buy %s." % ticker)
@@ -141,14 +144,18 @@ def get_positions():
 		return positions, position_list_size, position_list
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
+		return range(0, 0), 0, []
 		
 def get_clock():
 	return rest_client.get_clock()
 	
 def get_ticker_position(ticker):
-	position_size = rest_client.get_position(ticker)
-	get_qty = int(position_size.qty)
-	return get_qty
+	try:
+		position_size = rest_client.get_position(ticker)
+		get_qty = int(position_size.qty)
+		return get_qty
+	except Exception as e:
+		return 0
 	
 def load_model():
 	lg.info("Loading Machine Learning Model...")
