@@ -9,6 +9,7 @@ from logger import *
 import gvars
 import threading
 import time
+from alive_progress import alive_bar
 
 
 def check_ta(ticker, exchange):
@@ -194,7 +195,11 @@ def analysis_thread():
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-		time.sleep(gvars.market_sleep_time)
+		for total in gvars.market_sleep_time:
+			with alive_bar(total) as bar:
+				for _ in range(gvars.market_sleep_time):
+					time.sleep(1)
+					bar()
 	
 
 ###################INITIALIZATIONS AND RUN MAIN LOOP###################	
