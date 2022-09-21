@@ -71,10 +71,10 @@ async def news_data_handler(news):
 			except Exception as e:
 				lg.info("Buying %s..." % ticker)
 				stock_price = get_price(ticker)
-				new_qty = round(1000/stock_price)
+				new_qty = round(gvars.order_size_usd/stock_price)
 				try:
 					reddit_sentiment = apewisdom_sentiment(ticker)
-					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > 0.99 and reddit_sentiment > 60 and clock.is_open:
+					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and reddit_sentiment > gvars.reddit_buy_threshold and clock.is_open:
 						submit_buy_order(ticker, new_qty)
 					else:
 						lg.info("Conditions not sufficient to buy %s." % ticker)
@@ -167,16 +167,16 @@ def analysis_thread():
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
 				reddit_sentiment = apewisdom_sentiment(ticker)
-				if ta == 'STRONG_SELL' or reddit_sentiment < 50:
+				if ta == 'STRONG_SELL' or reddit_sentiment < gvars.reddit_sell_threshold:
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
 					
-			time.sleep(60)
+			time.sleep(gvars.loop_sleep_time)
 			clock = get_clock()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
-		time.sleep(600)
+		time.sleep(gvars.market_sleep_time)
 	
 
 ###################INITIALIZATIONS AND RUN MAIN LOOP###################	
