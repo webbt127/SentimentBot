@@ -85,7 +85,10 @@ async def news_data_handler(news):
 				lg.info(e)
 				lg.info("Buying %s..." % ticker)
 				stock_price = get_price(ticker)
-				new_qty = round(gvars.order_size_usd/stock_price)
+				if stock_price > 0:
+					new_qty = round(gvars.order_size_usd/stock_price)
+				else:
+					new_qty = 0
 				exchange = find_exchange(ticker)
 				ta = check_ta(ticker, exchange)
 				try:
@@ -100,9 +103,13 @@ async def news_data_handler(news):
 		lg.info("Waiting For Market News...")
 		
 def get_price(ticker):
-	stock_info = yf.Ticker(ticker).info
-	stock_price = stock_info['regularMarketPrice']
-	return stock_price
+	try:
+		stock_info = yf.Ticker(ticker).info
+		stock_price = stock_info['regularMarketPrice']
+		return stock_price
+	except Exception as e:
+		lg.info(e)
+		return 0
 	
 def minutes_to_close(clock):
 	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
