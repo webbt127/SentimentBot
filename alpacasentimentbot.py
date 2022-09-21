@@ -80,7 +80,6 @@ async def news_data_handler(news):
 		for ticker in tickers:
 			try:
 				get_ticker_position(ticker)
-				lg.info("%s Position Already Exists!" % ticker)
 			except Exception as e:
 				lg.info(e)
 				lg.info("Buying %s..." % ticker)
@@ -162,6 +161,7 @@ def get_ticker_position(ticker):
 		get_qty = int(position_size.qty)
 		return get_qty
 	except Exception as e:
+		lg.info("Position Already Exists for %s!" % ticker)
 		return 0
 	
 def load_model():
