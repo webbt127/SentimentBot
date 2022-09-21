@@ -214,7 +214,7 @@ def analysis_thread():
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		with alive_bar(gvars.market_sleep_time) as bar:
 			for _ in range(gvars.market_sleep_time):
-				time.sleep(1)
+				time.sleep(.1)
 				bar()
 	
 
