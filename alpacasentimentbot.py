@@ -142,12 +142,9 @@ def get_clock():
 	return rest_client.get_clock()
 	
 def get_ticker_position(ticker):
-	try:
-		position_size = rest_client.get_position(ticker)
-		get_qty = int(position_size.qty)
-		return get_qty
-	except Exception as e:
-		lg.info("No Existing Position for %s" % ticker)
+	position_size = rest_client.get_position(ticker)
+	get_qty = int(position_size.qty)
+	return get_qty
 	
 def load_model():
 	lg.info("Loading Machine Learning Model...")
