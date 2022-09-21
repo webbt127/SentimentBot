@@ -47,6 +47,15 @@ def find_exchange(ticker):
 	for index in indexes:
 		if ticker == assets[index].symbol:
 			return assets[index].exchange
+		
+def check_market_availability():
+
+	clock = get_clock()
+	minutes = minutes_to_close(clock)
+	if minutes < gvars.minutes_min or minutes > gvars.minutes_max:
+		return True
+	else:
+		return False
 
 async def news_data_handler(news):
 
@@ -60,7 +69,8 @@ async def news_data_handler(news):
 	
 	log_news(news, sentiment, previous_id, tickers, relevant_text)
 
-	clock = get_clock()
+	market_open = check_market_availability()
+	cancel_orders()
 
 	if news.id != previous_id:
 		for ticker in tickers:
@@ -76,7 +86,7 @@ async def news_data_handler(news):
 				ta = check_ta(ticker, exchange)
 				try:
 					reddit_sentiment = apewisdom_sentiment(ticker)
-					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY": # and clock.is_open:
+					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open:
 						submit_buy_order(ticker, new_qty)
 					else:
 						lg.info("Conditions not sufficient to buy %s." % ticker)
@@ -149,23 +159,29 @@ def load_model():
 	
 def submit_buy_order(ticker, buy_qty):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc')
+		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc', extended_hours=True)
 		lg.info("Market Buy Order Submitted!")
 	except Exception as e:
 		lg.info("Market Buy Order Failed! %s" % e)
 		
 def submit_sell_order(ticker, sell_qty):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc')
+		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc', extended_hours=True)
 		lg.info("Market Sell Order Submitted!")
 	except Exception as e:
 		lg.info("Market Sell Order Failed! %s" % e)
+		
+def cancel_orders():
+	try:
+		rest_client.cancel_all_orders()
+	except Exception as e:
+		lg.info("Unable To Cancel All Orders")
 	
 def analysis_thread():
 	while True:
 		positions, position_list_size, position_list = get_positions()
-		clock = get_clock()
-		while position_list_size > 0 and clock.is_open:
+		market_open = check_market_availability()
+		while position_list_size > 0 and market_open:
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
@@ -178,7 +194,7 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
 					
 			time.sleep(gvars.loop_sleep_time)
-			clock = get_clock()
+			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("No Open Positions Or Market is Closed, Sleeping 10 minutes...")
 		time.sleep(gvars.market_sleep_time)
@@ -190,9 +206,10 @@ initialize_logger()
 stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
 rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
-classifier = load_model()
+classifier = load_model() # load language processing model
 
 previous_id = 0 # initialize duplicate ID check storage
-clock = get_clock() # initialize time check
+market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
+cancel_orders() # cancel all open orders before iterating
 begin_threading()
