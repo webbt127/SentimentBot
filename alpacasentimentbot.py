@@ -69,12 +69,15 @@ async def news_data_handler(news):
 				get_ticker_position(ticker)
 				lg.info("%s Position Already Exists!" % ticker)
 			except Exception as e:
+				lg.info(e)
 				lg.info("Buying %s..." % ticker)
 				stock_price = get_price(ticker)
 				new_qty = round(gvars.order_size_usd/stock_price)
+				exchange = find_exchange(ticker)
+				ta = check_ta(ticker, exchange)
 				try:
 					reddit_sentiment = apewisdom_sentiment(ticker)
-					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and reddit_sentiment > gvars.reddit_buy_threshold and clock.is_open:
+					if sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY": # and clock.is_open:
 						submit_buy_order(ticker, new_qty)
 					else:
 						lg.info("Conditions not sufficient to buy %s." % ticker)
@@ -130,9 +133,12 @@ def get_clock():
 	return rest_client.get_clock()
 	
 def get_ticker_position(ticker):
-	position_size = rest_client.get_position(ticker)
-	get_qty = int(position_size.qty)
-	return get_qty
+	try:
+		position_size = rest_client.get_position(ticker)
+		get_qty = int(position_size.qty)
+		return get_qty
+	except Exception as e:
+		lg.info("No Existing Position for %s" % ticker)
 	
 def load_model():
 	lg.info("Loading Machine Learning Model...")
