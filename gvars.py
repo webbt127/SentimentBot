@@ -7,7 +7,7 @@ API_URL = "https://paper-api.alpaca.markets"
 
 reddit_sell_threshold = 50
 reddit_buy_threshold = 60
-market_sleep_time = 600
+market_sleep_time = 6000
 loop_sleep_time = 60
 min_sentiment_score = 0.99
 order_size_usd = 1000
