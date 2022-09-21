@@ -11,3 +11,5 @@ market_sleep_time = 600
 loop_sleep_time = 60
 min_sentiment_score = 0.99
 order_size_usd = 1000
+minutes_min = 660
+minutes_max = 1140
