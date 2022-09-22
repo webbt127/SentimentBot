@@ -53,8 +53,7 @@ def find_exchange(ticker):
 	for index in indexes:
 		if ticker == assets[index].symbol:
 			return assets[index].exchange
-		else:
-			return ""
+	return ""
 		
 def check_market_availability():
 
@@ -90,8 +89,8 @@ async def news_data_handler(news):
 						new_qty = round(gvars.order_size_usd/stock_price)
 					else:
 						new_qty = 0
-					#exchange = find_exchange(ticker)
-					ta = check_ta(ticker, 'nasdaq')
+					exchange = find_exchange(ticker)
+					ta = check_ta(ticker, exchange)
 					try:
 						reddit_sentiment = apewisdom_sentiment(ticker)
 						if reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open: #sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and
