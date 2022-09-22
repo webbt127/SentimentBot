@@ -51,6 +51,7 @@ def find_exchange(ticker):
 	assets = rest_client.list_assets()
 	indexes = range(0,32000)
 	for index in indexes:
+		alive_bar(indexes)
 		if ticker == assets[index].symbol:
 			return assets[index].exchange
 	return ""
@@ -213,6 +214,7 @@ def analysis_thread():
 		market_open = check_market_availability()
 		while market_open:
 			for position in positions:
+				alive_bar(positions)
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
