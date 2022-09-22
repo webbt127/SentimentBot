@@ -39,7 +39,7 @@ def apewisdom_sentiment(ticker):
 		index = index + 1
 	temp = percentages[3].strip('% ')
 	reddit_sentiment = int(temp)
-	if reddit_sentiment > 0:
+	if reddit_sentiment is not None:
 		lg.info("ApeWisdom Sentiment: %s" % reddit_sentiment)
 		return reddit_sentiment
 	else:
@@ -111,7 +111,7 @@ def get_price(ticker):
 		return stock_price
 	except Exception as e:
 		lg.info(e)
-		return 0
+		return
 	
 def seconds_to_close(clock):
 	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
