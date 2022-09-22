@@ -51,7 +51,6 @@ def apewisdom_sentiment(ticker):
 
 def find_exchange(ticker):
 	assets = rest_client.list_assets()
-	lg.info(assets)
 	indexes = range(0,32000)
 	for index in indexes:
 		if ticker == assets[index].symbol:
@@ -243,7 +242,7 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 classifier = load_model() # load language processing model
 apewisdom_sentiment('TSLA')
-check_ta('TSLA', 'nyse')
+check_ta('TSLA', 'nasdaq')
 
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
