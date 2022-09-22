@@ -214,8 +214,8 @@ def analysis_thread():
 		lg.info("Market is Closed, Sleeping...")
 		clock = get_clock()
 		seconds = seconds_to_close(clock)
-		if seconds < 68400 or seconds > 46800:
-			sleep_length = seconds - 46800
+		if seconds < 68400 or seconds > 39600:
+			sleep_length = seconds - 39600
 			with alive_bar(sleep_length) as bar:
 				for _ in range(sleep_length):
 					time.sleep(1)
