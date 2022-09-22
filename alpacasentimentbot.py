@@ -38,8 +38,9 @@ def apewisdom_sentiment(ticker):
 		percentages[index] = storage
 		index = index + 1
 	lg.info(percentages)
+	temp = percentages[3].strip('% ')
 	try:
-		reddit_sentiment = int(percentages[3].strip('% '))
+		reddit_sentiment = int(temp)
 		lg.info("%s ApeWisdom Sentiment: %s" % ticker % reddit_sentiment)
 		return reddit_sentiment
 	except Exception as e:
