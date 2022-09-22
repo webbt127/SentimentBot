@@ -17,6 +17,7 @@ def check_ta(ticker, exchange):
 		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
+		lg.info(recommendation)
 		return recommendation
 	except Exception as e:
 		lg.info("Unable To Find %s TA!" % ticker)
@@ -38,6 +39,7 @@ def apewisdom_sentiment(ticker):
 		index = index + 1
 	try:
 		reddit_sentiment = int(percentages[3].strip('% '))
+		lg.info("%s ApeWisdom Sentiment: %s" % ticker % reddit_sentiment)
 		return reddit_sentiment
 	except Exception as e:
 		lg.info("No Percentage Available for %s" % ticker)
@@ -46,11 +48,12 @@ def apewisdom_sentiment(ticker):
 
 def find_exchange(ticker):
 	assets = rest_client.list_assets()
-	indexes = range(0,32100)
+	indexes = range(0,32000)
 	for index in indexes:
 		if ticker == assets[index].symbol:
 			return assets[index].exchange
-	return ""
+		else:
+			return ""
 		
 def check_market_availability():
 
