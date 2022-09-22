@@ -113,8 +113,8 @@ def get_price(ticker):
 def seconds_to_close(clock):
 	market_close = (datetime.fromisoformat(clock.next_close.isoformat()))
 	now = (datetime.now(timezone.utc))
-	seconds_to_close = round(((market_close - now).seconds))
-	return seconds_to_close
+	seconds = round(((market_close - now).seconds))
+	return seconds
 	
 def log_news(news, sentiment, previous_id, tickers, relevant_text):
 	if previous_id != news.id:
@@ -213,9 +213,9 @@ def analysis_thread():
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
 		clock = get_clock()
-		seconds_to_close = seconds_to_close(clock)
-		if seconds_to_close < 68400 or seconds_to_close > 46800:
-			sleep_length = seconds_to_close - 46800
+		seconds = seconds_to_close(clock)
+		if seconds < 68400 or seconds > 46800:
+			sleep_length = seconds - 46800
 			with alive_bar(sleep_length) as bar:
 				for _ in range(sleep_length):
 					time.sleep(1)
