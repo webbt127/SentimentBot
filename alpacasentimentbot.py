@@ -39,6 +39,7 @@ def apewisdom_sentiment(ticker):
 		index = index + 1
 	lg.info(percentages)
 	temp = percentages[3].strip('% ')
+	lg.info(temp)
 	try:
 		reddit_sentiment = int(temp)
 		lg.info("%s ApeWisdom Sentiment: %s" % ticker % reddit_sentiment)
