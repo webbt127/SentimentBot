@@ -191,6 +191,18 @@ def cancel_orders():
 		rest_client.cancel_all_orders()
 	except Exception as e:
 		lg.info("Unable To Cancel All Orders")
+		
+def run_sleep():
+	clock = get_clock()
+		seconds = seconds_to_close(clock)
+		if seconds < 68400 or seconds > 39600:
+			sleep_length = seconds - 39600
+			if sleep_length < 1:
+				sleep_length = 1
+			with alive_bar(sleep_length) as bar:
+				for _ in range(sleep_length):
+					time.sleep(1)
+					bar()
 	
 def analysis_thread():
 	while True:
@@ -212,14 +224,7 @@ def analysis_thread():
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
-		clock = get_clock()
-		seconds = seconds_to_close(clock)
-		if seconds < 68400 or seconds > 39600:
-			sleep_length = seconds - 39600
-			with alive_bar(sleep_length) as bar:
-				for _ in range(sleep_length):
-					time.sleep(1)
-					bar()
+		run_sleep()
 	
 
 ###################INITIALIZATIONS AND RUN MAIN LOOP###################	
