@@ -90,7 +90,7 @@ async def news_data_handler(news):
 						new_qty = round(gvars.order_size_usd/stock_price)
 					else:
 						new_qty = 0
-					exchange = find_exchange(ticker)
+					#exchange = find_exchange(ticker)
 					ta = check_ta(ticker, 'nasdaq')
 					try:
 						reddit_sentiment = apewisdom_sentiment(ticker)
@@ -217,7 +217,7 @@ def analysis_thread():
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
-				ta = check_ta(ticker, 'nasdaq')
+				ta = check_ta(ticker, exchange)
 				reddit_sentiment = apewisdom_sentiment(ticker)
 				if ta == 'STRONG_SELL' or reddit_sentiment < gvars.reddit_sell_threshold:
 					submit_sell_order(ticker, current_qty)
