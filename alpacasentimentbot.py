@@ -212,7 +212,8 @@ def analysis_thread():
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
-		seconds_to_close = minutes_to_close() * 60
+		clock = get_clock()
+		seconds_to_close = minutes_to_close(clock) * 60
 		if seconds_to_close < 72000 or seconds_to_close > 43200:
 			sleep_length = seconds_to_close - 43200
 			with alive_bar(sleep_length) as bar:
