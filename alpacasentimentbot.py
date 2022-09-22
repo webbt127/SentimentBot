@@ -42,7 +42,7 @@ def apewisdom_sentiment(ticker):
 	lg.info(temp)
 	reddit_sentiment = int(temp)
 	if reddit_sentiment > 0:
-		lg.info("%s ApeWisdom Sentiment: %s" % ticker % reddit_sentiment)
+		lg.info("%s ApeWisdom Sentiment: %s" % ticker, reddit_sentiment)
 		return reddit_sentiment
 	else:
 		lg.info("No Percentage Available for %s" % ticker)
