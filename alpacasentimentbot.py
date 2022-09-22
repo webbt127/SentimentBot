@@ -40,11 +40,11 @@ def apewisdom_sentiment(ticker):
 	lg.info(percentages)
 	temp = percentages[3].strip('% ')
 	lg.info(temp)
-	try:
-		reddit_sentiment = int(temp)
+	reddit_sentiment = int(temp)
+	if reddit_sentiment > 0:
 		lg.info("%s ApeWisdom Sentiment: %s" % ticker % reddit_sentiment)
 		return reddit_sentiment
-	except Exception as e:
+	else:
 		lg.info("No Percentage Available for %s" % ticker)
 		return 0
 
