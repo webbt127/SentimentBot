@@ -237,6 +237,8 @@ stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
 rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 classifier = load_model() # load language processing model
+apewisdom_sentiment('TSLA')
+check_ta('TSLA', 'nyse')
 
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
