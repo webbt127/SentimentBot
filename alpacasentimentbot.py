@@ -37,9 +37,7 @@ def apewisdom_sentiment(ticker):
 		storage = string.text
 		percentages[index] = storage
 		index = index + 1
-	lg.info(percentages)
 	temp = percentages[3].strip('% ')
-	lg.info(temp)
 	reddit_sentiment = int(temp)
 	if reddit_sentiment > 0:
 		lg.info("ApeWisdom Sentiment: %s" % reddit_sentiment)
@@ -54,7 +52,6 @@ def find_exchange(ticker):
 	indexes = range(0,32000)
 	for index in indexes:
 		if ticker == assets[index].symbol:
-			lg.info(assets[index].exchange)
 			return assets[index].exchange
 		else:
 			return ""
@@ -241,8 +238,6 @@ stream_client = Stream(gvars.API_KEY, gvars.API_SECRET_KEY)
 rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 classifier = load_model() # load language processing model
-apewisdom_sentiment('TSLA')
-check_ta('TSLA', 'nasdaq')
 
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
