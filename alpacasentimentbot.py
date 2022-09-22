@@ -54,6 +54,7 @@ def find_exchange(ticker):
 	indexes = range(0,32000)
 	for index in indexes:
 		if ticker == assets[index].symbol:
+			lg.info(assets[index].exchange)
 			return assets[index].exchange
 		else:
 			return ""
