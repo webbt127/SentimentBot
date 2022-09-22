@@ -79,7 +79,7 @@ async def news_data_handler(news):
 	if news.id != previous_id:
 		for ticker in tickers:
 				current_position = get_ticker_position(ticker)
-				if current_position == 0
+				if current_position == 0:
 					lg.info("Buying %s..." % ticker)
 					stock_price = get_price(ticker)
 					if stock_price > 0:
@@ -96,6 +96,8 @@ async def news_data_handler(news):
 							lg.info("Conditions not sufficient to buy %s." % ticker)
 					except Exception as e:
 						lg.info("Unable To Analyze Reddit Sentiment for %s" % ticker)
+				else:
+					lg.info("%s Position Already Exists!" % ticker)
 		previous_id = news.id
 		lg.info("Waiting For Market News...")
 		
