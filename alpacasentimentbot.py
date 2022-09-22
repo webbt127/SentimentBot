@@ -194,15 +194,15 @@ def cancel_orders():
 		
 def run_sleep():
 	clock = get_clock()
-		seconds = seconds_to_close(clock)
-		if seconds < 68400 or seconds > 39600:
-			sleep_length = seconds - 39600
-			if sleep_length < 1:
-				sleep_length = 1
-			with alive_bar(sleep_length) as bar:
-				for _ in range(sleep_length):
-					time.sleep(1)
-					bar()
+	seconds = seconds_to_close(clock)
+	if seconds < 68400 or seconds > 39600:
+		sleep_length = seconds - 39600
+		if sleep_length < 1:
+			sleep_length = 1
+		with alive_bar(sleep_length) as bar:
+			for _ in range(sleep_length):
+				time.sleep(1)
+				bar()
 	
 def analysis_thread():
 	while True:
