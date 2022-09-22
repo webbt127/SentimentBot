@@ -86,7 +86,7 @@ async def news_data_handler(news):
 					lg.info("Buying %s..." % ticker)
 					stock_price = get_price(ticker)
 					if stock_price is not None:
-						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001)
+						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 					else:
 						new_qty = 0
 					exchange = find_exchange(ticker)
