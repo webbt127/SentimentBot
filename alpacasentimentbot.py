@@ -78,26 +78,24 @@ async def news_data_handler(news):
 
 	if news.id != previous_id:
 		for ticker in tickers:
-			try:
-				get_ticker_position(ticker)
-			except Exception as e:
-				lg.info(e)
-				lg.info("Buying %s..." % ticker)
-				stock_price = get_price(ticker)
-				if stock_price > 0:
-					new_qty = round(gvars.order_size_usd/stock_price)
-				else:
-					new_qty = 0
-				exchange = find_exchange(ticker)
-				ta = check_ta(ticker, exchange)
-				try:
-					reddit_sentiment = apewisdom_sentiment(ticker)
-					if reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open: #sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and
-						submit_buy_order(ticker, new_qty)
+				current_position = get_ticker_position(ticker)
+				if current_position == 0
+					lg.info("Buying %s..." % ticker)
+					stock_price = get_price(ticker)
+					if stock_price > 0:
+						new_qty = round(gvars.order_size_usd/stock_price)
 					else:
-						lg.info("Conditions not sufficient to buy %s." % ticker)
-				except Exception as e:
-					lg.info("Unable To Analyze Reddit Sentiment for %s" % ticker)
+						new_qty = 0
+					exchange = find_exchange(ticker)
+					ta = check_ta(ticker, exchange)
+					try:
+						reddit_sentiment = apewisdom_sentiment(ticker)
+						if reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open: #sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and
+							submit_buy_order(ticker, new_qty)
+						else:
+							lg.info("Conditions not sufficient to buy %s." % ticker)
+					except Exception as e:
+						lg.info("Unable To Analyze Reddit Sentiment for %s" % ticker)
 		previous_id = news.id
 		lg.info("Waiting For Market News...")
 		
