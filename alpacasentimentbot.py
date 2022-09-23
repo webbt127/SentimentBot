@@ -142,9 +142,15 @@ def begin_threading():
 	time.sleep(5)
 	thread2.start()
 	time.sleep(5)
-	thread1.join()
+	try:
+		thread1.join()
+	except Exception as e:
+        	lg.info("Exception Handled in Main, Details of the Exception: %s" % e)
 	time.sleep(5)
-	thread2.join()
+	try:
+		thread2.join()
+	except Exception as e:
+        	lg.info("Exception Handled in Main, Details of the Exception: %s" % e)
 	
 def get_positions():
 	try:
