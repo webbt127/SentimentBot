@@ -56,7 +56,7 @@ def get_pcr(ticker):
 	strings = html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'})
 	index = 0
 	lg.info(strings)
-	percentages = [None] * 5
+	percentages = [None] * 100
 	for string in strings:
 		storage = string.text
 		percentages[index] = storage
