@@ -60,10 +60,11 @@ def get_pcr(ticker):
 		storage = string.text
 		percentages[index] = storage
 		index = index + 1
-	temp = percentages[2].strip(' Put/Call Volume Ratio  ')
+	temp = percentages[2].strip('Put/Call Volume Ratio')
 	lg.info(percentages[2])
-	if percentages[2] is not None:
-		lg.info("BarChart PCR: %s" % reddit_sentiment)
+	barchart_pcr = int(temp)
+	if barchart_pcr is not None:
+		lg.info("BarChart PCR: %s" % barchart_pcr)
 		return reddit_sentiment
 	else:
 		lg.info("No PCR Available for %s" % ticker)
