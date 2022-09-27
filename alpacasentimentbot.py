@@ -45,6 +45,28 @@ def apewisdom_sentiment(ticker):
 	else:
 		lg.info("No Percentage Available for %s" % ticker)
 		return 0
+	
+def get_pcr(ticker):
+	barchart_url = "https://www.barchart.com/stocks/quotes/"
+	url = barchart_url + ticker + "/put-call-ratios"
+	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
+	response = urlopen(req)
+	
+	html = BeautifulSoup(response, features="html.parser")
+	strings = html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'})
+	index = 0
+	percentages = [None] * 5
+	for string in strings:
+		storage = string.text
+		percentages[index] = storage
+		index = index + 1
+	lg.info(percentages)
+	if percentages[0] is not None:
+		lg.info("BarChart PCR: %s" % reddit_sentiment)
+		return reddit_sentiment
+	else:
+		lg.info("No PCR Available for %s" % ticker)
+		return 0
 
 
 def find_exchange(ticker):
@@ -246,6 +268,7 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 classifier = load_model() # load language processing model
 
+get_pcr('TSLA')
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
