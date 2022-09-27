@@ -65,7 +65,7 @@ def get_pcr(ticker):
 	barchart_pcr = float(temp)
 	if barchart_pcr is not None:
 		lg.info("BarChart PCR: %s" % barchart_pcr)
-		return reddit_sentiment
+		return barchart_pcr
 	else:
 		lg.info("No PCR Available for %s" % ticker)
 		return 0
@@ -117,13 +117,13 @@ async def news_data_handler(news):
 					exchange = find_exchange(ticker)
 					ta = check_ta(ticker, exchange)
 					try:
-						reddit_sentiment = apewisdom_sentiment(ticker)
-						if reddit_sentiment > gvars.reddit_buy_threshold and ta == "STRONG_BUY" and market_open: #sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and
+						pcr = get_pcr(ticker)
+						if pcr > 0.8 and ta == "STRONG_BUY" and market_open: #sentiment[0]['label'] == 'positive' and sentiment[0]['score'] > gvars.min_sentiment_score and
 							submit_buy_order(ticker, new_qty)
 						else:
 							lg.info("Conditions not sufficient to buy %s." % ticker)
 					except Exception as e:
-						lg.info("Unable To Analyze Reddit Sentiment for %s" % ticker)
+						lg.info("Unable To Analyze PCR for %s" % ticker)
 				else:
 					lg.info("%s Position Already Exists!" % ticker)
 		previous_id = news.id
@@ -249,8 +249,8 @@ def analysis_thread():
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
-				reddit_sentiment = apewisdom_sentiment(ticker)
-				if ta == 'STRONG_SELL' or reddit_sentiment < gvars.reddit_sell_threshold:
+				pcr = get_pcr(ticker)
+				if ta == 'STRONG_SELL' or pcr < 0.65:
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
@@ -270,7 +270,6 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 classifier = load_model() # load language processing model
 
-get_pcr('TSLA')
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
