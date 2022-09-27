@@ -61,7 +61,7 @@ def get_pcr(ticker):
 		percentages[index] = storage
 		index = index + 1
 	temp = percentages[2].replace(" Put/Call Volume Ratio  ", "")
-	lg.info(percentages[2])
+	temp = temp.replace(" ", "")
 	barchart_pcr = int(temp)
 	if barchart_pcr is not None:
 		lg.info("BarChart PCR: %s" % barchart_pcr)
