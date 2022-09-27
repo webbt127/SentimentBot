@@ -62,7 +62,7 @@ def get_pcr(ticker):
 		index = index + 1
 	temp = percentages[2].replace(" Put/Call Volume Ratio  ", "")
 	temp = temp.replace(" ", "")
-	barchart_pcr = int(temp)
+	barchart_pcr = float(temp)
 	if barchart_pcr is not None:
 		lg.info("BarChart PCR: %s" % barchart_pcr)
 		return reddit_sentiment
