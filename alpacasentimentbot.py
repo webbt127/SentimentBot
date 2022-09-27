@@ -55,6 +55,7 @@ def get_pcr(ticker):
 	html = BeautifulSoup(response, features="html.parser")
 	strings = html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'})
 	index = 0
+	lg.info(strings)
 	percentages = [None] * 5
 	for string in strings:
 		storage = string.text
