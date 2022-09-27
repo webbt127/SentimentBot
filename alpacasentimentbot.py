@@ -55,14 +55,14 @@ def get_pcr(ticker):
 	html = BeautifulSoup(response, features="html.parser")
 	strings = html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'})
 	index = 0
-	lg.info(strings)
 	percentages = [None] * 100
 	for string in strings:
 		storage = string.text
 		percentages[index] = storage
 		index = index + 1
-	lg.info(percentages)
-	if percentages[0] is not None:
+	temp = percentages[2].strip(' Put/Call Volume Ratio  ')
+	lg.info(percentages[2])
+	if percentages[2] is not None:
 		lg.info("BarChart PCR: %s" % reddit_sentiment)
 		return reddit_sentiment
 	else:
