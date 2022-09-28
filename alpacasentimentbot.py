@@ -56,11 +56,11 @@ def get_pcr(ticker):
 	strings = html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'})
 	index = 0
 	percentages = [None] * 100
-	lg.info(percentages)
 	for string in strings:
 		storage = string.text
 		percentages[index] = storage
 		index = index + 1
+	lg.info(percentages)
 	temp = percentages[2].replace(" Put/Call Volume Ratio  ", "")
 	temp = temp.replace(" ", "")
 	barchart_pcr = float(temp)
