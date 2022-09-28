@@ -61,7 +61,7 @@ def get_pcr(ticker):
 		percentages[index] = storage
 		index = index + 1
 	lg.info(percentages)
-	temp = percentages[2].replace(" Put/Call Volume Ratio  ", "")
+	temp = percentages[5].replace(" Put/Call Open Interest Ratio  ", "")
 	temp = temp.replace(" ", "")
 	barchart_pcr = float(temp)
 	if barchart_pcr is not None:
