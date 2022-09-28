@@ -60,7 +60,6 @@ def get_pcr(ticker):
 		storage = string.text
 		percentages[index] = storage
 		index = index + 1
-	lg.info(percentages)
 	temp = percentages[5].replace(" Put/Call Open Interest Ratio  ", "")
 	temp = temp.replace(" ", "")
 	barchart_pcr = float(temp)
