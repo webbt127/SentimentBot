@@ -271,6 +271,7 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 classifier = load_model() # load language processing model
 
 get_pcr('TSLA')
+submit_buy_order('TSLA',1)
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
