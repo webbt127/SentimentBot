@@ -208,14 +208,14 @@ def load_model():
 	
 def submit_buy_order(ticker, buy_qty):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='day', extended_hours=True)
+		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='DAY', extended_hours=True)
 		lg.info("Market Buy Order Submitted!")
 	except Exception as e:
 		lg.info("Market Buy Order Failed! %s" % e)
 		
 def submit_sell_order(ticker, sell_qty):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='day', extended_hours=True)
+		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='DAY', extended_hours=True)
 		lg.info("Market Sell Order Submitted!")
 	except Exception as e:
 		lg.info("Market Sell Order Failed! %s" % e)
