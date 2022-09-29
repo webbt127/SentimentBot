@@ -229,7 +229,7 @@ def cancel_orders():
 def run_sleep():
 	clock = get_clock()
 	seconds = seconds_to_close(clock)
-	if seconds > 57600: #seconds < 68400 or seconds > 39600:
+	if seconds > 28800: #seconds < 68400 or seconds > 39600:
 		sleep_length = seconds - 28800
 		if sleep_length < 1:
 			sleep_length = 1
