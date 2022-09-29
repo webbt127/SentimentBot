@@ -17,7 +17,7 @@ def check_ta(ticker, exchange):
 		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
-		lg.info(recommendation)
+		lg.info("TradingView Recommendation: %s" % recommendation)
 		return recommendation
 	except Exception as e:
 		lg.info("Unable To Find %s TA!" % ticker)
@@ -229,8 +229,8 @@ def cancel_orders():
 def run_sleep():
 	clock = get_clock()
 	seconds = seconds_to_close(clock)
-	if seconds < 68400 or seconds > 39600:
-		sleep_length = seconds - 39600
+	if seconds > 57600: #seconds < 68400 or seconds > 39600:
+		sleep_length = seconds - 28800
 		if sleep_length < 1:
 			sleep_length = 1
 		with alive_bar(sleep_length) as bar:
