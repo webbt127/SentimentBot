@@ -84,7 +84,7 @@ def check_market_availability():
 
 	clock = get_clock()
 	minutes = seconds_to_close(clock)
-	if minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
+	if clock.is_open: #minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
 		return True
 	else:
 		return False
@@ -208,14 +208,14 @@ def load_model():
 	
 def submit_buy_order(ticker, buy_qty):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='DAY', extended_hours=True)
+		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc')
 		lg.info("Market Buy Order Submitted!")
 	except Exception as e:
 		lg.info("Market Buy Order Failed! %s" % e)
 		
 def submit_sell_order(ticker, sell_qty):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='DAY', extended_hours=True)
+		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc')
 		lg.info("Market Sell Order Submitted!")
 	except Exception as e:
 		lg.info("Market Sell Order Failed! %s" % e)
@@ -270,8 +270,6 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 	
 classifier = load_model() # load language processing model
 
-get_pcr('TSLA')
-submit_buy_order('TSLA',1)
 previous_id = 0 # initialize duplicate ID check storage
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
