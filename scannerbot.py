@@ -182,13 +182,13 @@ def analysis_thread():
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                         
-	                assets = rest_client.list_assets()
-	                indexes = range(0,32000)
-	                for index in indexes:
-		                alive_bar(indexes)
-		                ticker = assets[index].symbol
-                                exchange = assets[index].exchange
-                                current_position = get_ticker_position(ticker)
+			assets = rest_client.list_assets()
+			indexes = range(0,32000)
+			for index in indexes:
+				alive_bar(indexes)
+				ticker = assets[index].symbol
+				exchange = assets[index].exchange
+				current_position = get_ticker_position(ticker)
 				if current_position == 0:
 					lg.info("Buying %s..." % ticker)
 					stock_price = get_price(ticker)
