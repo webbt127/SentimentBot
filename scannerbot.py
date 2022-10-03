@@ -185,6 +185,7 @@ def analysis_thread():
                                         
 			assets = rest_client.list_assets()
 			indexes = range(0,32000)
+			valid_indexes = []
 			for index in indexes:
 				alive_bar(indexes)
 				ticker = assets[index].symbol
@@ -200,6 +201,7 @@ def analysis_thread():
 					ta = check_ta(ticker, exchange)
 					try:
 						pcr = get_pcr(ticker)
+						valid_indexes.append(index)
 						if pcr > 0.8 and ta == "STRONG_BUY" and market_open:
 							submit_buy_order(ticker, new_qty)
 						else:
@@ -211,6 +213,7 @@ def analysis_thread():
 					
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
+			print(valid_indexes)
 		lg.info("Market is Closed, Sleeping...")
 		run_sleep()
 	
