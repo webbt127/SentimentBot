@@ -208,7 +208,6 @@ def analysis_thread():
 				else:
 					lg.info("%s Position Already Exists!" % ticker)
 					
-			time.sleep(gvars.loop_sleep_time)
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
