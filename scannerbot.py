@@ -60,8 +60,9 @@ def get_pcr(ticker):
 		storage = string.text
 		percentages[index] = storage
 		index = index + 1
-	temp = percentages[5].replace(" Put/Call Open Interest Ratio  ", "")
-	temp = temp.replace(" ", "")
+	if percentages[5] is not None:
+		temp = percentages[5].replace(" Put/Call Open Interest Ratio  ", "")
+		temp = temp.replace(" ", "")
 	barchart_pcr = float(temp)
 	if barchart_pcr is not None:
 		lg.info("BarChart PCR: %s" % barchart_pcr)
