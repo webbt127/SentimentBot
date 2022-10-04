@@ -10,7 +10,7 @@ import gvars
 from joblib import Parallel, delayed, parallel_backend
 import time
 from alive_progress import alive_bar
-from tqdm.notebook import tqdm
+from tqdm.auto import tqdm
 
 
 def check_ta(ticker, exchange):
