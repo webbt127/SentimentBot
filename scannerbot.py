@@ -195,31 +195,34 @@ def analysis_thread():
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
 				for index in indexes:
-					ticker = assets[index].symbol
-					exchange = assets[index].exchange
-					if exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA':
-						ta = check_ta(ticker, exchange)
-						if ta == 'STRONG_BUY':
-							current_position = get_ticker_position(ticker)
-							if current_position == 0:
-								pcr = get_pcr(ticker)
-								if pcr > 0.8:
-									stock_price = get_price(ticker)
-									if stock_price is not None:
-										new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
+					if index not in ignores:
+						ticker = assets[index].symbol
+						exchange = assets[index].exchange
+						if exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA':
+							ta = check_ta(ticker, exchange)
+							if ta == 'STRONG_BUY':
+								current_position = get_ticker_position(ticker)
+								if current_position == 0:
+									pcr = get_pcr(ticker)
+									if pcr > 0.8:
+										stock_price = get_price(ticker)
+										if stock_price is not None:
+											new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
+										else:
+											new_qty = 0
+										submit_buy_order(ticker, new_qty)
 									else:
-										new_qty = 0
-									submit_buy_order(ticker, new_qty)
+										no_operation()
+										#lg.info("PCR not sufficient to buy %s." % ticker)
 								else:
 									no_operation()
-									#lg.info("PCR not sufficient to buy %s." % ticker)
+									#lg.info("Position Already Exists!")
 							else:
 								no_operation()
-								#lg.info("Position Already Exists!")
+								#lg.info("TA Not Sufficient For %s!" % ticker)
 						else:
-							no_operation()
-							#lg.info("TA Not Sufficient For %s!" % ticker)
-					bar()
+							ignores.append(index)
+						bar()
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
@@ -234,5 +237,6 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
+ignores = [] # initialize array of index to be ignored on scan
 cancel_orders() # cancel all open orders before iterating
 analysis_thread()
