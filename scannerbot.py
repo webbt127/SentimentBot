@@ -219,7 +219,7 @@ def analysis_thread():
                                         
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
-				Parallel(n_jobs=10)(delayed(run_buy_loop)(i) for i in indexes)
+				Parallel(n_jobs=2)(delayed(run_buy_loop)(i) for i in indexes)
 				for index in indexes:
 					run_buy_loop()
 					bar()
