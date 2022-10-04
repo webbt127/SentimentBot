@@ -183,9 +183,9 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                         
 			assets = rest_client.list_assets()
-			indexes = range(0,32000)
+			indexes = range(0,31600)
 			valid_indexes = []
-			with alive_bar(32000) as bar:
+			with alive_bar(31600) as bar:
 				for index in indexes:
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
