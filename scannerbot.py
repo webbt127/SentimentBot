@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
 import gvars
-import threading
+from joblib import Parallel, delayed
 import time
 from alive_progress import alive_bar
 
@@ -143,14 +143,14 @@ def get_ticker_position(ticker):
 def submit_buy_order(ticker, buy_qty):
 	try:
 		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc')
-		lg.info("Market Buy Order Submitted!")
+		lg.info("Market Buy Order Submitted For %s!" % ticker)
 	except Exception as e:
 		lg.info("Market Buy Order Failed! %s" % e)
 		
 def submit_sell_order(ticker, sell_qty):
 	try:
 		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc')
-		lg.info("Market Sell Order Submitted!")
+		lg.info("Market Sell Order Submitted For %s!" % ticker)
 	except Exception as e:
 		lg.info("Market Sell Order Failed! %s" % e)
 		
@@ -174,6 +174,32 @@ def run_sleep():
 				
 def no_operation():
 	return
+
+def run_buy_loop(index):
+	ticker = assets[index].symbol
+	exchange = assets[index].exchange
+	if exchange == 'NASDAQ' or exchange == 'NYSE':
+		ta = check_ta(ticker, exchange)
+		if ta == 'STRONG_BUY':
+			current_position = get_ticker_position(ticker)
+			if current_position == 0:
+				pcr = get_pcr(ticker)
+				if pcr > 0.8:
+					stock_price = get_price(ticker)
+					if stock_price is not None:
+						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
+					else:
+						new_qty = 0
+					submit_buy_order(ticker, new_qty)
+				else:
+					no_operation()
+					#lg.info("PCR not sufficient to buy %s." % ticker)
+			else:
+				no_operation()
+				#lg.info("Position Already Exists!")
+		else:
+			no_operation()
+			#lg.info("TA Not Sufficient For %s!" % ticker)
 	
 def analysis_thread():
 	while 1:
@@ -194,31 +220,9 @@ def analysis_thread():
 			assets = rest_client.list_assets()
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
+				Parallel(n_jobs=10)(delayed(run_buy_loop)(i) for i in indexes)
 				for index in indexes:
-					ticker = assets[index].symbol
-					exchange = assets[index].exchange
-					if exchange == 'NASDAQ' or exchange == 'NYSE':
-						ta = check_ta(ticker, exchange)
-						if ta == 'STRONG_BUY':
-							current_position = get_ticker_position(ticker)
-							if current_position == 0:
-								pcr = get_pcr(ticker)
-								if pcr > 0.8:
-									stock_price = get_price(ticker)
-									if stock_price is not None:
-										new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
-									else:
-										new_qty = 0
-									submit_buy_order(ticker, new_qty)
-								else:
-									no_operation()
-									#lg.info("PCR not sufficient to buy %s." % ticker)
-							else:
-								no_operation()
-								#lg.info("Position Already Exists!")
-						else:
-							no_operation()
-							#lg.info("TA Not Sufficient For %s!" % ticker)
+					run_buy_loop()
 					bar()
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
