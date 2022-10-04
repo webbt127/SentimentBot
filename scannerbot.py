@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from tradingview_ta import TA_Handler, Interval, Exchange
 from logger import *
 import gvars
-from joblib import Parallel, delayed
+from joblib import Parallel, delayed, parallel_backend
 import time
 from alive_progress import alive_bar
 
@@ -219,10 +219,8 @@ def analysis_thread():
                                         
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
-				Parallel(n_jobs=2)(delayed(run_buy_loop)(i) for i in indexes)
-				for index in indexes:
-					run_buy_loop()
-					bar()
+				Parallel(n_jobs=2, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
+				bar()
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
