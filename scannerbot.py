@@ -82,8 +82,6 @@ def find_exchange(ticker):
 	return ""
 		
 def check_market_availability():
-
-	return True
 	clock = get_clock()
 	minutes = seconds_to_close(clock)
 	if clock.is_open: #minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
@@ -189,27 +187,26 @@ def analysis_thread():
 				for index in indexes:
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
-					print(exchange)
-					current_position = 0 #get_ticker_position(ticker)
-					if current_position == 0 and (exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA'):
+					ta = check_ta(ticker, exchange)
+					current_position = get_ticker_position(ticker)
+					if current_position == 0 and (exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA') and ta == 'STRONG_BUY':
 						lg.info("Buying %s..." % ticker)
-						stock_price = 1 #get_price(ticker)
+						stock_price = get_price(ticker)
 						if stock_price is not None:
 							new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 						else:
 							new_qty = 0
-						ta = check_ta(ticker, exchange)
 						try:
 							pcr = get_pcr(ticker)
 							valid_indexes.append(index)
-							if pcr > 0.8 and ta == "STRONG_BUY" and market_open:
+							if pcr > 0.8 and market_open:
 								submit_buy_order(ticker, new_qty)
 							else:
 								lg.info("Conditions not sufficient to buy %s." % ticker)
 						except Exception as e:
 							lg.info("Unable To Analyze PCR for %s" % ticker)
 					else:
-						lg.info("%s Position Already Exists!" % ticker)
+						lg.info("Cannot Buy %s!" % ticker)
 					bar()
 					
 				market_open = check_market_availability()
