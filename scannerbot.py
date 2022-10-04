@@ -220,8 +220,8 @@ def analysis_thread():
                                         
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
-				Parallel(n_jobs=2, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
 				bar()
+				Parallel(n_jobs=2, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
