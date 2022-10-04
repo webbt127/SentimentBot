@@ -10,6 +10,7 @@ import gvars
 from joblib import Parallel, delayed, parallel_backend
 import time
 from alive_progress import alive_bar
+from tqdm import tqdm
 
 
 def check_ta(ticker, exchange):
@@ -17,7 +18,7 @@ def check_ta(ticker, exchange):
 		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
-		#lg.info("TradingView Recommendation: %s" % recommendation)
+		lg.info("TradingView Recommendation: %s" % recommendation)
 		return recommendation
 	except Exception as e:
 		#lg.info("Unable To Find %s TA!" % ticker)
@@ -73,7 +74,7 @@ def get_pcr(ticker):
 	else:
 		barchart_pcr = 0.0
 	if barchart_pcr is not None:
-		#lg.info("BarChart PCR: %s" % barchart_pcr)
+		lg.info("BarChart PCR: %s" % barchart_pcr)
 		return barchart_pcr
 	else:
 		#lg.info("No PCR Available for %s" % ticker)
@@ -219,9 +220,7 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                         
 			indexes = range(0,31600)
-			with alive_bar(31600) as bar:
-				Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
-				bar()
+			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in tqdm(indexes))
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
