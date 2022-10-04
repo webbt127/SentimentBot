@@ -175,7 +175,7 @@ def run_sleep():
 def no_operation():
 	return
 
-def run_buy_loop(assets, index):
+def run_buy_loop(index):
 	ticker = assets[index].symbol
 	exchange = assets[index].exchange
 	if exchange == 'NASDAQ' or exchange == 'NYSE':
@@ -217,10 +217,9 @@ def analysis_thread():
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                         
-			assets = rest_client.list_assets()
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
-				Parallel(n_jobs=10)(delayed(run_buy_loop)(assets, i) for i in indexes)
+				Parallel(n_jobs=10)(delayed(run_buy_loop)(i) for i in indexes)
 				for index in indexes:
 					run_buy_loop()
 					bar()
@@ -238,6 +237,6 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
-ignores = [] # initialize array of index to be ignored on scan
+assets = rest_client.list_assets()
 cancel_orders() # cancel all open orders before iterating
 analysis_thread()
