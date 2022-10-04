@@ -91,7 +91,6 @@ def find_exchange(ticker):
 	return ""
 		
 def check_market_availability():
-	return True
 	clock = get_clock()
 	minutes = seconds_to_close(clock)
 	if clock.is_open: #minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
