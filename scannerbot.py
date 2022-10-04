@@ -177,8 +177,6 @@ def no_operation():
 	return
 
 def run_buy_loop(index):
-	with alive_bar(31600) as bar:
-		bar()
 	ticker = assets[index].symbol
 	exchange = assets[index].exchange
 	if exchange == 'NASDAQ' or exchange == 'NYSE':
@@ -221,7 +219,9 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                         
 			indexes = range(0,31600)
-			Parallel(n_jobs=2, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
+			with alive_bar(31600) as bar:
+				Parallel(n_jobs=2, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
+				bar()
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
