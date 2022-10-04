@@ -191,7 +191,7 @@ def analysis_thread():
 				ticker = assets[index].symbol
 				exchange = assets[index].exchange
 				current_position = get_ticker_position(ticker)
-				if current_position == 0:
+				if current_position == 0 and (exchange == 'NASDAQ' or exchange =='NYSE'):
 					lg.info("Buying %s..." % ticker)
 					stock_price = get_price(ticker)
 					if stock_price is not None:
