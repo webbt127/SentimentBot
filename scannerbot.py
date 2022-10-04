@@ -168,6 +168,9 @@ def run_sleep():
 			for _ in range(sleep_length):
 				time.sleep(1)
 				bar()
+				
+def no_operation():
+	return
 	
 def analysis_thread():
 	while True:
@@ -191,7 +194,6 @@ def analysis_thread():
 				for index in indexes:
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
-					bar()
 					if exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA':
 						ta = check_ta(ticker, exchange)
 						if ta == 'STRONG_BUY':
@@ -205,15 +207,16 @@ def analysis_thread():
 									else:
 										new_qty = 0
 									submit_buy_order(ticker, new_qty)
-"""
 								else:
-									lg.info("PCR not sufficient to buy %s." % ticker)
+									no_operation()
+									#lg.info("PCR not sufficient to buy %s." % ticker)
 							else:
-								lg.info("Position Already Exists!")
+								no_operation()
+								#lg.info("Position Already Exists!")
 						else:
-							lg.info("TA Not Sufficient For %s!" % ticker)
-"""
-					
+							no_operation()
+							#lg.info("TA Not Sufficient For %s!" % ticker)
+					bar()
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
