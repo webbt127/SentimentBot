@@ -176,7 +176,7 @@ def no_operation():
 	return
 	
 def analysis_thread():
-	while True:
+	while 1:
 		positions, position_list_size, position_list = get_positions()
 		market_open = check_market_availability()
 		while market_open:
@@ -195,34 +195,31 @@ def analysis_thread():
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
 				for index in indexes:
-					if index not in ignores:
-						ticker = assets[index].symbol
-						exchange = assets[index].exchange
-						if exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA':
-							ta = check_ta(ticker, exchange)
-							if ta == 'STRONG_BUY':
-								current_position = get_ticker_position(ticker)
-								if current_position == 0:
-									pcr = get_pcr(ticker)
-									if pcr > 0.8:
-										stock_price = get_price(ticker)
-										if stock_price is not None:
-											new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
-										else:
-											new_qty = 0
-										submit_buy_order(ticker, new_qty)
+					ticker = assets[index].symbol
+					exchange = assets[index].exchange
+					if exchange == 'NASDAQ' or exchange == 'NYSE':
+						ta = check_ta(ticker, exchange)
+						if ta == 'STRONG_BUY':
+							current_position = get_ticker_position(ticker)
+							if current_position == 0:
+								pcr = get_pcr(ticker)
+								if pcr > 0.8:
+									stock_price = get_price(ticker)
+									if stock_price is not None:
+										new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 									else:
-										no_operation()
-										#lg.info("PCR not sufficient to buy %s." % ticker)
+										new_qty = 0
+									submit_buy_order(ticker, new_qty)
 								else:
 									no_operation()
-									#lg.info("Position Already Exists!")
+									#lg.info("PCR not sufficient to buy %s." % ticker)
 							else:
 								no_operation()
-								#lg.info("TA Not Sufficient For %s!" % ticker)
+								#lg.info("Position Already Exists!")
 						else:
-							ignores.append(index)
-						bar()
+							no_operation()
+							#lg.info("TA Not Sufficient For %s!" % ticker)
+					bar()
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
