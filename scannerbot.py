@@ -50,7 +50,10 @@ def get_pcr(ticker):
 	barchart_url = "https://www.barchart.com/stocks/quotes/"
 	url = barchart_url + ticker + "/put-call-ratios"
 	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
-	response = urlopen(req)
+	try:
+		response = urlopen(req)
+	except Exception as e:
+		return 0
 	
 	html = BeautifulSoup(response, features="html.parser")
 	try:
