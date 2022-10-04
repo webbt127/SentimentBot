@@ -192,7 +192,7 @@ def analysis_thread():
 					current_position = get_ticker_position(ticker)
 					if current_position == 0 and (exchange == 'NASDAQ' or exchange =='NYSE'):
 						lg.info("Buying %s..." % ticker)
-						stock_price = get_price(ticker)
+						stock_price = 1 #get_price(ticker)
 						if stock_price is not None:
 							new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 						else:
