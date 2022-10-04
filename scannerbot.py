@@ -220,7 +220,7 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                         
 			indexes = range(0,31600)
-			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in alive_bar(31600))
+			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in tqdm(indexes, desc="Scanning Progress", leave=False, position=0))
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
