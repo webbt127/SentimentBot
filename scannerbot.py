@@ -20,7 +20,7 @@ def check_ta(ticker, exchange):
 		lg.info("TradingView Recommendation: %s" % recommendation)
 		return recommendation
 	except Exception as e:
-		lg.info("Unable To Find %s TA!" % ticker)
+		#lg.info("Unable To Find %s TA!" % ticker)
 		return ""
 		
 def apewisdom_sentiment(ticker):
@@ -71,7 +71,7 @@ def get_pcr(ticker):
 		lg.info("BarChart PCR: %s" % barchart_pcr)
 		return barchart_pcr
 	else:
-		lg.info("No PCR Available for %s" % ticker)
+		#lg.info("No PCR Available for %s" % ticker)
 		return 0
 
 
@@ -202,12 +202,14 @@ def analysis_thread():
 									else:
 										new_qty = 0
 									submit_buy_order(ticker, new_qty)
+"""
 								else:
 									lg.info("PCR not sufficient to buy %s." % ticker)
 							else:
 								lg.info("Position Already Exists!")
 						else:
 							lg.info("TA Not Sufficient For %s!" % ticker)
+"""
 					bar()
 					
 				market_open = check_market_availability()
