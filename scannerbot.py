@@ -188,23 +188,26 @@ def analysis_thread():
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
 					ta = check_ta(ticker, exchange)
-					current_position = get_ticker_position(ticker)
-					if current_position == 0 and (exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA') and ta == 'STRONG_BUY':
-						lg.info("Buying %s..." % ticker)
-						stock_price = get_price(ticker)
-						if stock_price is not None:
-							new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
-						else:
-							new_qty = 0
-						try:
-							pcr = get_pcr(ticker)
-							valid_indexes.append(index)
-							if pcr > 0.8 and market_open:
-								submit_buy_order(ticker, new_qty)
+					if (exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA') and ta == 'STRONG_BUY':
+						current_position = get_ticker_position(ticker)
+						if current_position == 0:
+							lg.info("Buying %s..." % ticker)
+							stock_price = get_price(ticker)
+							if stock_price is not None:
+								new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 							else:
-								lg.info("Conditions not sufficient to buy %s." % ticker)
-						except Exception as e:
-							lg.info("Unable To Analyze PCR for %s" % ticker)
+								new_qty = 0
+							try:
+								pcr = get_pcr(ticker)
+								valid_indexes.append(index)
+								if pcr > 0.8 and market_open:
+									submit_buy_order(ticker, new_qty)
+								else:
+									lg.info("Conditions not sufficient to buy %s." % ticker)
+							except Exception as e:
+								lg.info("Unable To Analyze PCR for %s" % ticker)
+						else:
+							lg.info("Position Already Exists!")
 					else:
 						lg.info("Cannot Buy %s!" % ticker)
 					bar()
