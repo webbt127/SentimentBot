@@ -68,7 +68,7 @@ def get_pcr(ticker):
 		temp = temp.replace(" ", "")
 		barchart_pcr = float(temp)
 	else:
-		barchar_pcr = 0.0
+		barchart_pcr = 0.0
 	if barchart_pcr is not None:
 		lg.info("BarChart PCR: %s" % barchart_pcr)
 		return barchart_pcr
