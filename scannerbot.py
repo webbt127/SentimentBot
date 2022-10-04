@@ -55,8 +55,8 @@ def get_pcr(ticker):
 	html = BeautifulSoup(response, features="html.parser")
 	try:
 		strings = html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'})
-	else:
-		lg.info("Unable To Find PCR Data For %s!" % ticker)
+	except Exception as e:
+		lg.info("Unable To Find PCR Data %s" % e)
 	index = 0
 	percentages = [None] * 100
 	for string in strings:
