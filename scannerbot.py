@@ -191,6 +191,7 @@ def analysis_thread():
 				for index in indexes:
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
+					bar()
 					if exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA':
 						ta = check_ta(ticker, exchange)
 						if ta == 'STRONG_BUY':
@@ -212,7 +213,6 @@ def analysis_thread():
 						else:
 							lg.info("TA Not Sufficient For %s!" % ticker)
 """
-					bar()
 					
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
