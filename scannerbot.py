@@ -189,24 +189,25 @@ def analysis_thread():
 				for index in indexes:
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
-					ta = check_ta(ticker, exchange)
-					if (exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA') and ta == 'STRONG_BUY':
-						current_position = get_ticker_position(ticker)
-						if current_position == 0:
-							pcr = get_pcr(ticker)
-							if pcr > 0.8:
-								stock_price = get_price(ticker)
-								if stock_price is not None:
-									new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
+					if exchange == 'NASDAQ' or exchange == 'NYSE' or exchange == 'ARCA':
+						ta = check_ta(ticker, exchange)
+						if ta == 'STRONG_BUY':
+							current_position = get_ticker_position(ticker)
+							if current_position == 0:
+								pcr = get_pcr(ticker)
+								if pcr > 0.8:
+									stock_price = get_price(ticker)
+									if stock_price is not None:
+										new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
+									else:
+										new_qty = 0
+									submit_buy_order(ticker, new_qty)
 								else:
-									new_qty = 0
-								submit_buy_order(ticker, new_qty)
+									lg.info("PCR not sufficient to buy %s." % ticker)
 							else:
-								lg.info("PCR not sufficient to buy %s." % ticker)
+								lg.info("Position Already Exists!")
 						else:
-							lg.info("Position Already Exists!")
-					else:
-						lg.info("Cannot Buy %s!" % ticker)
+							lg.info("TA Not Sufficient For %s!" % ticker)
 					bar()
 					
 				market_open = check_market_availability()
