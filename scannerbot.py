@@ -175,7 +175,7 @@ def run_sleep():
 def no_operation():
 	return
 
-def run_buy_loop(index):
+def run_buy_loop(assets, index):
 	ticker = assets[index].symbol
 	exchange = assets[index].exchange
 	if exchange == 'NASDAQ' or exchange == 'NYSE':
@@ -220,7 +220,7 @@ def analysis_thread():
 			assets = rest_client.list_assets()
 			indexes = range(0,31600)
 			with alive_bar(31600) as bar:
-				Parallel(n_jobs=10)(delayed(run_buy_loop)(i) for i in indexes)
+				Parallel(n_jobs=10)(delayed(run_buy_loop)(assets, i) for i in indexes)
 				for index in indexes:
 					run_buy_loop()
 					bar()
