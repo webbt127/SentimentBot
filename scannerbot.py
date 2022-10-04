@@ -186,34 +186,35 @@ def analysis_thread():
 			assets = rest_client.list_assets()
 			indexes = range(0,32000)
 			valid_indexes = []
-			for index in indexes:
-				alive_bar(indexes)
-				ticker = assets[index].symbol
-				exchange = assets[index].exchange
-				current_position = get_ticker_position(ticker)
-				if current_position == 0 and (exchange == 'NASDAQ' or exchange =='NYSE'):
-					lg.info("Buying %s..." % ticker)
-					stock_price = get_price(ticker)
-					if stock_price is not None:
-						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
-					else:
-						new_qty = 0
-					ta = check_ta(ticker, exchange)
-					try:
-						pcr = get_pcr(ticker)
-						valid_indexes.append(index)
-						if pcr > 0.8 and ta == "STRONG_BUY" and market_open:
-							submit_buy_order(ticker, new_qty)
+			with alive_bar(32000) as bar():
+				for index in indexes:
+					alive_bar(indexes)
+					ticker = assets[index].symbol
+					exchange = assets[index].exchange
+					current_position = get_ticker_position(ticker)
+					if current_position == 0 and (exchange == 'NASDAQ' or exchange =='NYSE'):
+						lg.info("Buying %s..." % ticker)
+						stock_price = get_price(ticker)
+						if stock_price is not None:
+							new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 						else:
-							lg.info("Conditions not sufficient to buy %s." % ticker)
-					except Exception as e:
-						lg.info("Unable To Analyze PCR for %s" % ticker)
-				else:
-					lg.info("%s Position Already Exists!" % ticker)
+							new_qty = 0
+						ta = check_ta(ticker, exchange)
+						try:
+							pcr = get_pcr(ticker)
+							valid_indexes.append(index)
+							if pcr > 0.8 and ta == "STRONG_BUY" and market_open:
+								submit_buy_order(ticker, new_qty)
+							else:
+								lg.info("Conditions not sufficient to buy %s." % ticker)
+						except Exception as e:
+							lg.info("Unable To Analyze PCR for %s" % ticker)
+					else:
+						lg.info("%s Position Already Exists!" % ticker)
 					
-			market_open = check_market_availability()
-			positions, position_list_size, position_list = get_positions()
-			print(valid_indexes)
+				market_open = check_market_availability()
+				positions, position_list_size, position_list = get_positions()
+				lg.info(valid_indexes)
 		lg.info("Market is Closed, Sleeping...")
 		run_sleep()
 	
