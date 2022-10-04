@@ -172,7 +172,6 @@ def analysis_thread():
 		market_open = check_market_availability()
 		while market_open:
 			for position in positions:
-				alive_bar(positions)
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
@@ -186,9 +185,8 @@ def analysis_thread():
 			assets = rest_client.list_assets()
 			indexes = range(0,32000)
 			valid_indexes = []
-			with alive_bar(32000) as bar():
+			with alive_bar(32000) as bar:
 				for index in indexes:
-					alive_bar(indexes)
 					ticker = assets[index].symbol
 					exchange = assets[index].exchange
 					current_position = get_ticker_position(ticker)
@@ -211,6 +209,7 @@ def analysis_thread():
 							lg.info("Unable To Analyze PCR for %s" % ticker)
 					else:
 						lg.info("%s Position Already Exists!" % ticker)
+					bar()
 					
 				market_open = check_market_availability()
 				positions, position_list_size, position_list = get_positions()
