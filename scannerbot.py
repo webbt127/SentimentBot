@@ -18,7 +18,7 @@ def check_ta(ticker, exchange):
 		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
-		lg.info("TradingView Recommendation: %s" % recommendation)
+		#lg.info("TradingView Recommendation: %s" % recommendation)
 		return recommendation
 	except Exception as e:
 		#lg.info("Unable To Find %s TA!" % ticker)
@@ -74,7 +74,7 @@ def get_pcr(ticker):
 	else:
 		barchart_pcr = 0.0
 	if barchart_pcr is not None:
-		lg.info("BarChart PCR: %s" % barchart_pcr)
+		#lg.info("BarChart PCR: %s" % barchart_pcr)
 		return barchart_pcr
 	else:
 		#lg.info("No PCR Available for %s" % ticker)
