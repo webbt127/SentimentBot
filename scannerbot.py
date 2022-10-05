@@ -208,17 +208,21 @@ def analysis_thread():
 		positions, position_list_size, position_list = get_positions()
 		market_open = check_market_availability()
 		while market_open:
+			pcr_count = 0
 			for position in positions:
 				ticker = position_list[position].__getattr__('symbol')
 				exchange = position_list[position].__getattr__('exchange')
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
 				pcr = get_pcr(ticker)
+				if pcr > 2.0
+					pcr_count = pcr_count + 1
 				if ta == 'STRONG_SELL' or ta == 'SELL' or pcr < 0.65:
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
-                                        
+                                     
+			lg.info("PCR Count Above 2.0: %s" % pcr_count	
 			indexes = range(0,31600)
 			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in tqdm(indexes))
 			market_open = check_market_availability()
