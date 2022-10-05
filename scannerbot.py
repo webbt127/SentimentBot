@@ -215,7 +215,7 @@ def analysis_thread():
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
 				pcr = get_pcr(ticker)
-				if pcr > 2.0
+				if pcr > 2.0:
 					pcr_count = pcr_count + 1
 				if ta == 'STRONG_SELL' or ta == 'SELL' or pcr < 0.65:
 					submit_sell_order(ticker, current_qty)
