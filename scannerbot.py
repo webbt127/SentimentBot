@@ -222,7 +222,7 @@ def analysis_thread():
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                      
-			lg.info("PCR Count Above 2.0: %s" % pcr_count	
+			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
 			indexes = range(0,31600)
 			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in tqdm(indexes))
 			market_open = check_market_availability()
