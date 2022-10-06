@@ -92,7 +92,7 @@ def get_pivots(ticker, exchange):
 	
 	html = BeautifulSoup(response, features="html.parser")
 	try:
-		strings = html.find_all('div', {'class':'cell-Xoorn8RH'})
+		strings = html.find_all('div', {'class':'tableWrapper-Xoorn8RH'})
 	except Exception as e:
 		lg.info("Unable To Find PCR Data %s" % e)
 	print(strings)
