@@ -89,7 +89,7 @@ def check_market_availability():
 	else:
 		return False
 
-async def news_data_handler(news):
+def news_data_handler(news):
 
 	summary = news.summary
 	headline = news.headline
