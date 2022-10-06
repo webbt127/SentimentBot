@@ -10,7 +10,6 @@ import gvars
 from joblib import Parallel, delayed, parallel_backend
 import time
 from alive_progress import alive_bar
-from tqdm.auto import tqdm
 
 
 def check_ta(ticker, exchange):
@@ -238,7 +237,7 @@ def analysis_thread():
                                      
 			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
 			indexes = range(0,31600)
-			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in tqdm(indexes))
+			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
