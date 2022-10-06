@@ -274,7 +274,9 @@ def analysis_thread():
                                      
 			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
 			indexes = range(0,31600)
-			Parallel(n_jobs=8, prefer="threads")(delayed(run_buy_loop)(i) for i in indexes)
+			assets = [a for a in active_assets if a.exchange == 'NASDAQ']
+			for i in active_assets:
+				run_buy_loop(i)
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
@@ -290,6 +292,7 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 market_open = check_market_availability() # initial time check
 #get_pivots('TXN', 'NASDAQ')
 positions = get_positions() # check existing positions before iterating
-assets = rest_client.list_assets()
+assets = rest_client.list_assets(status='active')
+active_assets = [a for a in assets if a.exchange == 'NASDAQ' or a.exchange == 'NYSE']
 cancel_orders() # cancel all open orders before iterating
 analysis_thread()
