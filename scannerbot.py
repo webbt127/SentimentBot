@@ -96,13 +96,13 @@ def get_pivots(ticker, exchange, price):
 	for i in table:
 		pivots[index] = i.text
 		index = index + 1
-	fib_s3 = pivots[80]
-	fib_s2 = pivots[86]
-	fib_s1 = pivots[92]
-	fib_p = pivots[98]
-	fib_r1 = pivots[104]
-	fib_r2 = pivots[110]
-	fib_r3 = pivots[116]
+	fib_s3 = float(pivots[80])
+	fib_s2 = float(pivots[86])
+	fib_s1 = float(pivots[92])
+	fib_p = float(pivots[98])
+	fib_r1 = float(pivots[104])
+	fib_r2 = float(pivots[110])
+	fib_r3 = float(pivots[116])
 	print(fib_s3, fib_s2, fib_s1, fib_p, fib_r1, fib_r2, fib_r3)
 	if pivots[0] is not None:
 		if price > fib_s1 and price < fib_p:
@@ -274,10 +274,11 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                      
 			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
-			indexes = range(0,31600)
 			assets = [a for a in active_assets if a.exchange == 'NASDAQ']
-			for i in active_assets:
-				run_buy_loop(i)
+			with alive_bar(active_assets) as bar():
+				for i in active_assets:
+					run_buy_loop(i)
+					bar()
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
