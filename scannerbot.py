@@ -91,11 +91,10 @@ def get_pivots(ticker, exchange):
 		return 0
 	
 	html = BeautifulSoup(response, features="html.parser")
-	try:
-		strings = html.find_all('div', {'class':'tableWrapper-Xoorn8RH'})
-	except Exception as e:
-		lg.info("Unable To Find PCR Data %s" % e)
-	print(strings)
+	
+	for name in html.find_all("td", class_="cell-Xoorn8RH"):
+		salary = name.parent.find_all('td')[-1]  # last cell in the row
+		print(name.get_text())
 
 def find_exchange(ticker):
 	assets = rest_client.list_assets()
