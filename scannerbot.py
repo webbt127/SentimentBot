@@ -92,7 +92,7 @@ def get_pivots(ticker, exchange):
 	
 	html = BeautifulSoup(response, features="html.parser")
 	
-	for name in html.find_all("td", class_="cell-Xoorn8RH"):
+	for name in html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'}):
 		salary = name.parent.find_all('td')[-1]  # last cell in the row
 		print(name.get_text())
 
@@ -253,7 +253,7 @@ initialize_logger()
 rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 
 market_open = check_market_availability() # initial time check
-get_pivots('TXN', 'NASDAQ')
+#get_pivots('TXN', 'NASDAQ')
 positions = get_positions() # check existing positions before iterating
 assets = rest_client.list_assets()
 cancel_orders() # cancel all open orders before iterating
