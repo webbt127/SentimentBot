@@ -230,7 +230,7 @@ def analysis_thread():
 				pcr = get_pcr(ticker)
 				if pcr > 2.0:
 					pcr_count = pcr_count + 1
-				if ta == 'STRONG_SELL' or ta == 'SELL' or pcr < 0.65:
+				if ta == 'STRONG_SELL' or ta == 'SELL' or pcr < 1.0:
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
