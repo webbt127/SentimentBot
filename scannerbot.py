@@ -73,7 +73,7 @@ def get_pcr(ticker):
 	else:
 		barchart_pcr = 0.0
 	if barchart_pcr is not None:
-		lg.info("BarChart PCR: %s" % barchart_pcr)
+		#lg.info("BarChart PCR: %s" % barchart_pcr)
 		return barchart_pcr
 	else:
 		#lg.info("No PCR Available for %s" % ticker)
