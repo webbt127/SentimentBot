@@ -1,8 +1,8 @@
 # encoding: utf-8
 
 # REST API
-API_KEY = "PKN8XXMQ3BWDLJNY4EYA"
-API_SECRET_KEY = "4jDF8Fbzbv3TRbsJ3Wf63lG37PSl1KyFa3hmQkCO"
+API_KEY = "PKX9QLYDX6CFM5FU0WSH"
+API_SECRET_KEY = "v8CtBo4qMYj2PJcbiyXxig1hzMIh7deRHdyK3Ylb"
 API_URL = "https://paper-api.alpaca.markets"
 
 reddit_sell_threshold = 50
