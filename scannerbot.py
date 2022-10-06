@@ -79,21 +79,49 @@ def get_pcr(ticker):
 		#lg.info("No PCR Available for %s" % ticker)
 		return 0
 	
-def get_pivots(ticker, exchange):
-
-	barchart_url = "https://www.tradingview.com/symbols/"
-	url = barchart_url + exchange + "-" + ticker + "/technicals"
-	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
+def get_pivots(ticker, exchange, price):
+	tv_url = "https://www.tradingview.com/symbols/"
+	url = tv_url + exchange + "-" + ticker + "/technicals"
+	session = HTMLSession()
 	try:
-		response = urlopen(req)
+		req = session.get(url)
 	except Exception as e:
+		lg.info(e)
+	req.html.render()
+	table = req.html.find('td')
+	pivots = [None] * 120
+	index = 0
+	for i in table:
+		pivots[index] = i.text
+		index = index + 1
+	fib_s3 = pivots[80]
+	fib_s2 = pivots[86]
+	fib_s1 = pivots[92]
+	fib_p = pivots[98]
+	fib_r1 = pivots[104]
+	fib_r2 = pivots[110]
+	fib_r3 = pivots[116]
+	if pivots[0] is not None:
+		if price > fib_s1 and price < fib_p:
+			return 1
+		elif price > fib_s2 and price < fib_s1:
+			return 2
+		elif price > fib_s3 and price < fib_s2:
+			return 3
+		elif price < fib_s3:
+			return 4
+		elif price < fib_r1 and price > fib_p:
+			return -1
+		elif price < fib_r2 and price > fib_r1:
+			return -2
+		elif price < fib_r3 and price > fib_r2:
+			return -3
+		elif price > fib_r3:
+			return -4
+		else:
+			return 0
+	else:
 		return 0
-	
-	html = BeautifulSoup(response, features="html.parser")
-	
-	for name in html.find_all('div', {'class':'bc-futures-options-quotes-totals__data-row'}):
-		salary = name.parent.find_all('td')[-1]  # last cell in the row
-		print(name.get_text())
 
 def find_exchange(ticker):
 	assets = rest_client.list_assets()
@@ -105,6 +133,7 @@ def find_exchange(ticker):
 	return ""
 		
 def check_market_availability():
+	return True
 	clock = get_clock()
 	minutes = seconds_to_close(clock)
 	if clock.is_open: #minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
@@ -206,7 +235,12 @@ def run_buy_loop(index):
 						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 					else:
 						new_qty = 0
-					submit_buy_order(ticker, new_qty, ta, pcr)
+					pivots = get_pivots(ticker, exchange, stock_price)
+					new_qty = new_qty * pivots
+					if pivots > 0:
+						submit_buy_order(ticker, new_qty, ta, pcr)
+					else:
+						no_operation()
 				else:
 					no_operation()
 					#lg.info("PCR not sufficient to buy %s." % ticker)
