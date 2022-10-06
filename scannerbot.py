@@ -275,12 +275,10 @@ def analysis_thread():
                                      
 			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
 			assets = [a for a in active_assets if a.exchange == 'NASDAQ']
-			size = len(assets)
-			print(size)
-			with alive_bar(size) as buy_bar():
+			with alive_bar(len(assets)) as bar:
 				for i in active_assets:
 					run_buy_loop(i)
-					buy_bar()
+					bar()
 			market_open = check_market_availability()
 			positions, position_list_size, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
