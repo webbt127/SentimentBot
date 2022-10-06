@@ -103,6 +103,7 @@ def get_pivots(ticker, exchange, price):
 	fib_r1 = pivots[104]
 	fib_r2 = pivots[110]
 	fib_r3 = pivots[116]
+	print(fib_s3, fib_s2, fib_s1, fib_p, fib_r1, fib_r2, fib_r3)
 	if pivots[0] is not None:
 		if price > fib_s1 and price < fib_p:
 			return 1
