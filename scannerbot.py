@@ -91,7 +91,7 @@ def get_pivots(ticker, exchange, price):
 		lg.info(e)
 	req.html.render()
 	table = req.html.find('td')
-	req.close()
+	req.session.close()
 	pivots = [None] * 120
 	index = 0
 	for i in table:
