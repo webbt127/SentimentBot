@@ -223,9 +223,9 @@ def run_sleep():
 def no_operation():
 	return
 
-def run_buy_loop(index):
-	ticker = assets[index].symbol
-	exchange = assets[index].exchange
+def run_buy_loop(asset):
+	ticker = asset.symbol
+	exchange = asset.exchange
 	if exchange == 'NASDAQ' or exchange == 'NYSE':
 		ta = check_ta(ticker, exchange)
 		if ta == 'STRONG_BUY':
