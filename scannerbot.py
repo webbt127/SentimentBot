@@ -10,6 +10,8 @@ import gvars
 from joblib import Parallel, delayed, parallel_backend
 import time
 from alive_progress import alive_bar
+from requests_html import HTMLSession
+
 
 
 def check_ta(ticker, exchange):
