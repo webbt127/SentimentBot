@@ -155,10 +155,11 @@ def get_ticker_position(ticker):
 		#lg.info("No Existing Position For %s!" % ticker)
 		return 0
 	
-def submit_buy_order(ticker, buy_qty):
+def submit_buy_order(ticker, buy_qty, ta, pcr):
 	try:
 		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc')
 		lg.info("Market Buy Order Submitted For %s!" % ticker)
+		print("TA: ", ta, " PCR: ", pcr)
 	except Exception as e:
 		lg.info("Market Buy Order Failed! %s" % e)
 		
@@ -205,7 +206,7 @@ def run_buy_loop(index):
 						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 					else:
 						new_qty = 0
-					submit_buy_order(ticker, new_qty)
+					submit_buy_order(ticker, new_qty, ta, pcr)
 				else:
 					no_operation()
 					#lg.info("PCR not sufficient to buy %s." % ticker)
