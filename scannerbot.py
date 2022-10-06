@@ -79,7 +79,19 @@ def get_pcr(ticker):
 	else:
 		#lg.info("No PCR Available for %s" % ticker)
 		return 0
+	
+def get_pivots(ticker, exchange):
 
+	barchart_url = "https://www.tradingview.com/symbols/"
+	url = barchart_url + exchange + "-" + ticker + "/technicals"
+	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
+	try:
+		response = urlopen(req)
+	except Exception as e:
+		return 0
+	
+	html = BeautifulSoup(response, features="html.parser")
+	print(html)
 
 def find_exchange(ticker):
 	assets = rest_client.list_assets()
@@ -238,6 +250,7 @@ initialize_logger()
 rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 
 market_open = check_market_availability() # initial time check
+get_pivots('TXN', 'NASDAQ')
 positions = get_positions() # check existing positions before iterating
 assets = rest_client.list_assets()
 cancel_orders() # cancel all open orders before iterating
