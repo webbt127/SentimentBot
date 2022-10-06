@@ -103,7 +103,6 @@ def get_pivots(ticker, exchange, price):
 	fib_r1 = float(pivots[104])
 	fib_r2 = float(pivots[110])
 	fib_r3 = float(pivots[116])
-	print(fib_s3, fib_s2, fib_s1, fib_p, fib_r1, fib_r2, fib_r3)
 	if pivots[0] is not None:
 		if price > fib_s1 and price < fib_p:
 			return 1
@@ -239,6 +238,7 @@ def run_buy_loop(asset):
 					else:
 						new_qty = 0
 					pivots = get_pivots(ticker, exchange, stock_price)
+					print(pivots)
 					new_qty = new_qty * pivots
 					if pivots > 0:
 						submit_buy_order(ticker, new_qty, ta, pcr)
