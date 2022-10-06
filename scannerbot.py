@@ -199,7 +199,7 @@ def run_buy_loop(index):
 			current_position = get_ticker_position(ticker)
 			if current_position == 0:
 				pcr = get_pcr(ticker)
-				if pcr > 0.8:
+				if pcr > 2.0:
 					stock_price = get_price(ticker)
 					if stock_price is not None:
 						new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
