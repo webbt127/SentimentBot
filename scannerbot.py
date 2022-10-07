@@ -229,47 +229,43 @@ def run_buy_loop(asset):
 	if ta == 'STRONG_BUY':
 		current_position = get_ticker_position(ticker)
 		if current_position == 0:
-			pcr = get_pcr(ticker)
-			if pcr > 1.5:
-				stock_price = get_price(ticker)
-				if stock_price is not None:
-					new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
-				else:
-					new_qty = 0
-				pivots = get_pivots(ticker, exchange, stock_price)
-				print(pivots)
-				new_qty = new_qty * pivots
-				if pivots > 0:
-					submit_buy_order(ticker, new_qty, ta, pcr)
-				else:
-					no_operation()
+			#pcr = get_pcr(ticker)
+			#if pcr > 1.5:
+			stock_price = get_price(ticker)
+			if stock_price is not None:
+				new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
 			else:
-				no_operation()
-				#lg.info("PCR not sufficient to buy %s." % ticker)
+				new_qty = 0
+			pivots = get_pivots(ticker, exchange, stock_price)
+			print(pivots)
+			new_qty = new_qty * pivots
+			if pivots > 0:
+				submit_buy_order(ticker, new_qty, ta, pcr)
 		else:
-			no_operation()
-			#lg.info("Position Already Exists!")
+			lg.info("Position Already Exists!")
 	else:
-		no_operation()
-		#lg.info("TA Not Sufficient For %s!" % ticker)
+		lg.info("TA Not Sufficient For %s!" % ticker)
+		
+def run_sell_loop(positions):
+	for position in positions:
+		ticker = position_list[position].__getattr__('symbol')
+		exchange = position_list[position].__getattr__('exchange')
+		current_qty = get_ticker_position(ticker)
+		ta = check_ta(ticker, exchange)
+		stock_price = get_price(ticker)
+		pivots = get_pivots(ticker, exchange, stock_price)
+		#pcr = get_pcr(ticker)
+		if ta == 'STRONG_SELL' or ta == 'SELL' or pivots < 0:#pcr < 1.0:
+			submit_sell_order(ticker, current_qty)
+		else:
+			lg.info("Conditions not sufficient to sell %s." % ticker)
 	
-def analysis_thread():
+def main_loop():
 	while 1:
 		positions, position_list_size, position_list = get_positions()
 		market_open = check_market_availability()
 		while market_open:
-			pcr_count = 0
-			for position in positions:
-				ticker = position_list[position].__getattr__('symbol')
-				exchange = position_list[position].__getattr__('exchange')
-				current_qty = get_ticker_position(ticker)
-				ta = check_ta(ticker, exchange)
-				pcr = get_pcr(ticker)
-				if ta == 'STRONG_SELL' or ta == 'SELL' or pcr < 1.0:
-					submit_sell_order(ticker, current_qty)
-				else:
-					lg.info("Conditions not sufficient to sell %s." % ticker)
-                                     	
+			run_sell_loop(positions)
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
@@ -291,4 +287,4 @@ positions = get_positions() # check existing positions before iterating
 active_assets = rest_client.list_assets(status='active')
 assets = [a for a in active_assets if a.exchange == 'NASDAQ' or a.exchange == 'NYSE']
 cancel_orders() # cancel all open orders before iterating
-analysis_thread()
+main_loop()
