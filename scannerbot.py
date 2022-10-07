@@ -40,7 +40,7 @@ def get_positions():
 		position_list = rest_client.list_positions()
 		position_list_size = len(position_list)
 		positions = range(0, position_list_size - 1)
-		return positions, position_list_size, position_list
+		return positions, position_list
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
 		return range(0, 0), 0, []
@@ -117,7 +117,7 @@ def run_buy_loop(asset):
 	else:
 		lg.info("TA Not Sufficient For %s!" % ticker)
 		
-def run_sell_loop(positions):
+def run_sell_loop(positions, position_list):
 	for position in positions:
 		ticker = position_list[position].__getattr__('symbol')
 		exchange = position_list[position].__getattr__('exchange')
@@ -133,16 +133,16 @@ def run_sell_loop(positions):
 	
 def main_loop():
 	while 1:
-		positions, position_list_size, position_list = get_positions()
+		positions, position_list = get_positions()
 		market_open = check_market_availability()
 		while market_open:
-			run_sell_loop(positions)
+			run_sell_loop(positions, position_list)
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
 					bar()
 			market_open = check_market_availability()
-			positions, position_list_size, position_list = get_positions()
+			positions, position_list = get_positions()
 		lg.info("Market is Closed, Sleeping...")
 		cancel_orders()
 		run_sleep()
