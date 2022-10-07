@@ -273,9 +273,8 @@ def analysis_thread():
 					lg.info("Conditions not sufficient to sell %s." % ticker)
                                      
 			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
-			assets = [a for a in active_assets if a.exchange == 'NASDAQ']
-			with alive_bar(len(active_assets)) as bar:
-				for i in active_assets:
+			with alive_bar(len(assets)) as bar:
+				for i in assets:
 					run_buy_loop(i)
 					bar()
 			market_open = check_market_availability()
@@ -292,7 +291,7 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
-assets = rest_client.list_assets(status='active')
-active_assets = [a for a in assets if a.exchange == 'NASDAQ' or a.exchange == 'NYSE']
+active_assets = rest_client.list_assets(status='active')
+assets = [a for a in active_assets if a.exchange == 'NASDAQ' or a.exchange == 'NYSE']
 cancel_orders() # cancel all open orders before iterating
 analysis_thread()
