@@ -226,11 +226,11 @@ def run_buy_loop(asset):
 	ticker = asset.symbol
 	exchange = asset.exchange
 	ta = check_ta(ticker, exchange)
-	if ta == 'STRONG_BUY':
+	if ta == 'STRONG_BUY' or ta == 'BUY':
 		current_position = get_ticker_position(ticker)
 		if current_position == 0:
 			pcr = get_pcr(ticker)
-			if pcr > 2.0:
+			if pcr > 1.5:
 				stock_price = get_price(ticker)
 				if stock_price is not None:
 					new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
@@ -265,14 +265,11 @@ def analysis_thread():
 				current_qty = get_ticker_position(ticker)
 				ta = check_ta(ticker, exchange)
 				pcr = get_pcr(ticker)
-				if pcr > 2.0:
-					pcr_count = pcr_count + 1
 				if ta == 'STRONG_SELL' or ta == 'SELL' or pcr < 1.0:
 					submit_sell_order(ticker, current_qty)
 				else:
 					lg.info("Conditions not sufficient to sell %s." % ticker)
-                                     
-			lg.info("PCR Count Above 2.0: %s" % pcr_count)	
+                                     	
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
