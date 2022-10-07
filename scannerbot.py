@@ -226,7 +226,7 @@ def run_buy_loop(asset):
 	ticker = asset.symbol
 	exchange = asset.exchange
 	ta = check_ta(ticker, exchange)
-	if ta == 'STRONG_BUY' or ta == 'BUY':
+	if ta == 'STRONG_BUY':
 		current_position = get_ticker_position(ticker)
 		if current_position == 0:
 			pcr = get_pcr(ticker)
