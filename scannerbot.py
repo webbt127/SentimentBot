@@ -139,6 +139,7 @@ def main_loop():
 			run_sell_loop(positions, position_list)
 			for i in assets:
 				i.ta = check_ta(i.symbol, i.exchange)
+				print(i.ta)
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
