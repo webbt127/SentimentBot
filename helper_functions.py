@@ -36,9 +36,9 @@ def check_ta2(asset):
 		asset.ta = ""
 		return asset
         
-def apewisdom_sentiment(ticker):
+def apewisdom_sentiment(asset):
 	apewisdom_url = "https://apewisdom.io/stocks/"
-	url = apewisdom_url + ticker
+	url = apewisdom_url + asset.symbol
 	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
 	response = urlopen(req)
 	
@@ -54,19 +54,20 @@ def apewisdom_sentiment(ticker):
 	reddit_sentiment = int(temp)
 	if reddit_sentiment is not None:
 		lg.info("ApeWisdom Sentiment: %s" % reddit_sentiment)
-		return reddit_sentiment
+		asset.reddit_sentiment = reddit_sentiment
 	else:
 		lg.info("No Percentage Available for %s" % ticker)
-		return 0
+		asset.reddit_sentiment = 0.0
+	return asset
         
-def get_pcr(ticker):
+def get_pcr(asset):
 	barchart_url = "https://www.barchart.com/stocks/quotes/"
 	url = barchart_url + ticker + "/put-call-ratios"
 	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
 	try:
 		response = urlopen(req)
 	except Exception as e:
-		return 0
+		asset.pcr = 0.0
 	
 	html = BeautifulSoup(response, features="html.parser")
 	try:
@@ -87,14 +88,15 @@ def get_pcr(ticker):
 		barchart_pcr = 0.0
 	if barchart_pcr is not None:
 		#lg.info("BarChart PCR: %s" % barchart_pcr)
-		return barchart_pcr
+		asset.pcr = barchart_pcr
 	else:
 		#lg.info("No PCR Available for %s" % ticker)
-		return 0
+		asset.pcr = 0.0
+	return asset
         
-def get_pivots(ticker, exchange, price):
+def get_pivots(asset):
 	tv_url = "https://www.tradingview.com/symbols/"
-	url = tv_url + exchange + "-" + ticker + "/technicals"
+	url = tv_url + asset.exchange + "-" + asset.symbol + "/technicals"
 	session = HTMLSession()
 	try:
 		req = session.get(url)
@@ -109,41 +111,42 @@ def get_pivots(ticker, exchange, price):
 		pivots[index] = i.text
 		index = index + 1
 	if pivots[80] == '—' or pivots[86] == '—' or pivots[92] == '—' or pivots[98] == '—' or pivots[104] == '—' or pivots[110] == '—' or pivots[116] == '—':
-		return 0
-	fib_s3 = float(pivots[80])
-	fib_s2 = float(pivots[86])
-	fib_s1 = float(pivots[92])
-	fib_p = float(pivots[98])
-	fib_r1 = float(pivots[104])
-	fib_r2 = float(pivots[110])
-	fib_r3 = float(pivots[116])
+		asset.pivot = 0
+	asset.s3 = float(pivots[80])
+	asset.s2 = float(pivots[86])
+	asset.s1 = float(pivots[92])
+	asset.p = float(pivots[98])
+	asset.r1 = float(pivots[104])
+	asset.r2 = float(pivots[110])
+	asset.r3 = float(pivots[116])
 	if pivots[0] is not None:
-		if price > fib_s1 and price < fib_p:
-			return 1
-		elif price > fib_s2 and price < fib_s1:
-			return 2
-		elif price > fib_s3 and price < fib_s2:
-			return 3
-		elif price < fib_s3:
-			return 4
-		elif price < fib_r1 and price > fib_p:
-			return -1
-		elif price < fib_r2 and price > fib_r1:
-			return -2
-		elif price < fib_r3 and price > fib_r2:
-			return -3
-		elif price > fib_r3:
-			return -4
+		if asset.price > asset.s1 and asset.price < asset.p:
+			asset.pivot = 1
+		elif asset.price > asset.s2 and asset.price < asset.s1:
+			asset.pivot = 2
+		elif asset.price > asset.s3 and asset.price < asset.s2:
+			asset.pivot = 3
+		elif asset.price < asset.s3:
+			asset.pivot = 4
+		elif asset.price < asset.r1 and asset.price > asset.p:
+			asset.pivot = -1
+		elif asset.price < asset.r2 and asset.price > asset.r1:
+			asset.pivot = -2
+		elif asset.price < asset.r3 and asset.price > asset.r2:
+			asset.pivot = -3
+		elif asset.price > asset.r3:
+			asset.pivot = -4
 		else:
-			return 0
+			asset.pivot = 0
 	else:
-		return 0
+		asset.pivot = 0
+	return asset
         
-def get_price(ticker):
+def get_price(asset):
 	try:
 		stock_info = yf.Ticker(ticker).info
-		stock_price = stock_info['regularMarketPrice']
-		return stock_price
+		asset.price = stock_info['regularMarketPrice']
+		return asset
 	except Exception as e:
 		lg.info(e)
 		return
