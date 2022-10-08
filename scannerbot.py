@@ -77,14 +77,13 @@ def cancel_orders():
 def run_sleep():
 	clock = get_clock()
 	seconds = seconds_to_open(clock)
-	if seconds < 63000:
-		sleep_length = seconds
-		if sleep_length < 1:
-			sleep_length = 1
-		with alive_bar(sleep_length) as bar:
-			for _ in range(sleep_length):
-				time.sleep(1)
-				bar()
+	sleep_length = seconds
+	if sleep_length < 1:
+		sleep_length = 1
+	with alive_bar(sleep_length) as bar:
+		for _ in range(sleep_length):
+			time.sleep(1)
+			bar()
 				
 def no_operation():
 	return
