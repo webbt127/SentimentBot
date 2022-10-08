@@ -95,7 +95,7 @@ def get_pivots(ticker, exchange, price):
 	for i in table:
 		pivots[index] = i.text
 		index = index + 1
-	if pivots[80] == '-' or pivots[86] == '-' or pivots[92] == '-' or pivots[98] == '-' or pivots[104] == '-' or pivots[110] == '-' or pivots[116] == '-':
+	if pivots[80] == '—' or pivots[86] == '—' or pivots[92] == '—' or pivots[98] == '—' or pivots[104] == '—' or pivots[110] == '—' or pivots[116] == '—':
 		return 0
 	fib_s3 = float(pivots[80])
 	fib_s2 = float(pivots[86])
