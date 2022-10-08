@@ -134,7 +134,7 @@ def main_loop():
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
-			positions, position_list = get_positions()
+			assets = get_positions()
 		lg.info("Market is Closed, Sleeping...")
 		cancel_orders()
 		run_sleep()
