@@ -122,7 +122,7 @@ def run_sell_loop(positions):
 		else:
 			lg.info("Conditions not sufficient to sell %s." % position.symbol)
 	
-def main_loop():
+def main_loop(assets):
 	while 1:
 		positions = get_positions()
 		market_open = check_market_availability()
@@ -150,4 +150,4 @@ positions = get_positions() # check existing positions before iterating
 active_assets = rest_client.list_assets(status='active')
 assets = [a for a in active_assets if (a.exchange == 'NASDAQ' or a.exchange == 'NYSE') and a.tradable == True]
 cancel_orders() # cancel all open orders before iterating
-main_loop()
+main_loop(assets)
