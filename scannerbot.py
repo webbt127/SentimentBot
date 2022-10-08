@@ -137,8 +137,7 @@ def main_loop():
 		market_open = check_market_availability()
 		while market_open:
 			run_sell_loop(positions, position_list)
-			with alive_bar(len(assets)) as bar:
-				Parallel(n_jobs=8, prefer="threads")(delayed(check_ta2)(i) for i in assets)
+			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta2)(i) for i in assets)
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
