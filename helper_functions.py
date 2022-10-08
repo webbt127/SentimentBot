@@ -111,7 +111,7 @@ def get_pivots(asset):
 	asset.r1 = float(pivots[104])
 	asset.r2 = float(pivots[110])
 	asset.r3 = float(pivots[116])
-	if pivots[0] is not None:
+	if pivots[0] is not None and asset.price is not None:
 		if asset.price > asset.s1 and asset.price < asset.p:
 			asset.pivot = 1
 		elif asset.price > asset.s2 and asset.price < asset.s1:
