@@ -38,36 +38,34 @@ def seconds_to_open(clock):
 def get_positions():
 	try:
 		position_list = rest_client.list_positions()
-		position_list_size = len(position_list)
-		positions = range(0, position_list_size - 1)
-		return positions, position_list
+		return position_list
 	except Exception as e:
 		lg.info("No Positions to Analyze! %s" % e)
-		return range(0, 0), 0, []
+		return []
 		
 def get_clock():
 	return rest_client.get_clock()
 	
-def get_ticker_position(ticker):
+def get_ticker_position(asset):
 	try:
-		position_size = rest_client.get_position(ticker)
-		get_qty = int(position_size.qty)
-		return get_qty
+		position_size = rest_client.get_position(asset.symbol)
+		asset.qty = int(position_size.qty)
 	except Exception as e:
 		#lg.info("No Existing Position For %s!" % ticker)
-		return 0
+		asset.qty = 0
+	return asset
 	
-def submit_buy_order(ticker, buy_qty):
+def submit_buy_order(asset):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=buy_qty, side='buy', type='market', time_in_force='gtc')
-		lg.info("Market Buy Order Submitted For %s!" % ticker)
+		rest_client.submit_order(symbol=asset.symbol, qty=asset.new_qty, side='buy', type='market', time_in_force='gtc')
+		lg.info("Market Buy Order Submitted For %s!" % asset.symbol)
 	except Exception as e:
 		lg.info("Market Buy Order Failed! %s" % e)
 		
-def submit_sell_order(ticker, sell_qty):
+def submit_sell_order(asset):
 	try:
-		rest_client.submit_order(symbol=ticker, qty=sell_qty, side='sell', type='market', time_in_force='gtc')
-		lg.info("Market Sell Order Submitted For %s!" % ticker)
+		rest_client.submit_order(symbol=asset.symbol, qty=asset.qty, side='sell', type='market', time_in_force='gtc')
+		lg.info("Market Sell Order Submitted For %s!" % asset.symbol)
 	except Exception as e:
 		lg.info("Market Sell Order Failed! %s" % e)
 		
@@ -93,54 +91,47 @@ def no_operation():
 	return
 
 def run_buy_loop(asset):
-	ticker = asset.symbol
-	exchange = asset.exchange
-	#ta = check_ta(ticker, exchange)
+	check_ta(asset)
 	if asset.ta == 'STRONG_BUY':
-		current_position = get_ticker_position(ticker)
-		if current_position == 0:
-			#pcr = get_pcr(ticker)
-			#if pcr > 1.5:
-			stock_price = get_price(ticker)
-			if stock_price is not None:
-				new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
-				pivots = get_pivots(ticker, exchange, stock_price)
+		get_ticker_position(asset)
+		if asset.qty == 0:
+			get_price(asset)
+			if asset.price is not None:
+				asset.new_qty = round(gvars.order_size_usd/(asset.price + .0000000000001))
+				get_pivots(asset)
 			else:
-				new_qty = 0
-				pivots = 0
-			print(pivots)
-			new_qty = new_qty * pivots
-			if pivots > 0:
-				submit_buy_order(ticker, new_qty)
+				asset.new_qty = 0
+				asset.pivot = 0
+			asset.new_qty = asset.new_qty * asset.pivot
+			if asset.pivot > 0:
+				submit_buy_order(asset)
 		else:
 			lg.info("Position Already Exists!")
 	else:
-		lg.info("TA Not Sufficient For %s!" % ticker)
+		lg.info("TA Not Sufficient For %s!" % asset.symbol)
 		
-def run_sell_loop(positions, position_list):
-	for position in positions:
-		ticker = position_list[position].__getattr__('symbol')
-		exchange = position_list[position].__getattr__('exchange')
-		current_qty = get_ticker_position(ticker)
-		ta = check_ta1(ticker, exchange)
-		stock_price = get_price(ticker)
-		pivots = get_pivots(ticker, exchange, stock_price)
+def run_sell_loop(assets):
+	for asset in assets:
+		get_ticker_position(asset)
+		check_ta(asset)
+		get_price(asset)
+		get_pivots(asset)
 		#pcr = get_pcr(ticker)
-		if ta == 'STRONG_SELL' or ta == 'SELL' or pivots < 0:#pcr < 1.0:
-			submit_sell_order(ticker, current_qty)
+		if asset.ta == 'STRONG_SELL' or asset.ta == 'SELL' or asset.pivot < 0:#pcr < 1.0:
+			submit_sell_order(asset)
 		else:
 			lg.info("Conditions not sufficient to sell %s." % ticker)
 	
 def main_loop():
 	while 1:
-		positions, position_list = get_positions()
+		assets = get_positions()
 		market_open = check_market_availability()
 		while market_open:
-			run_sell_loop(positions, position_list)
+			run_sell_loop(assets)
 			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta2)(i) for i in assets)
 			with alive_bar(len(assets)) as bar:
-				for i in assets:
-					run_buy_loop(i)
+				for asset in assets:
+					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
 			positions, position_list = get_positions()
