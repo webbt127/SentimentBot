@@ -89,9 +89,11 @@ def get_pivots(asset):
 	session = HTMLSession()
 	try:
 		req = session.get(url)
+		req.html.render()
 	except Exception as e:
+		asset.pivot = 0
 		lg.info(e)
-	req.html.render()
+		return asset
 	table = req.html.find('td')
 	req.session.close()
 	pivots = [None] * 120
