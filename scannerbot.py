@@ -90,24 +90,29 @@ def run_sleep():
 def no_operation():
 	return
 
+def calc_qty(asset):
+	if asset.price is not None:
+		asset.new_qty = round(gvars.order_size_usd/(asset.price + .0000000000001))
+		get_pivots(asset)
+	else:
+		asset.new_qty = 0
+		asset.pivot = 0
+	asset.new_qty = asset.new_qty * asset.pivot
+	return asset
+
 def run_buy_loop(asset):
 	if asset.ta == 'STRONG_BUY':
-		get_ticker_position(asset)
 		if asset.qty == 0:
-			get_price(asset)
-			if asset.price is not None:
-				asset.new_qty = round(gvars.order_size_usd/(asset.price + .0000000000001))
-				get_pivots(asset)
-			else:
-				asset.new_qty = 0
-				asset.pivot = 0
-			asset.new_qty = asset.new_qty * asset.pivot
+			get_pivots(asset)
 			if asset.pivot > 0:
+				get_price(asset)
+				calc_qty(asset)
 				submit_buy_order(asset)
 		else:
 			lg.info("Position Already Exists!")
 	else:
-		lg.info("TA Not Sufficient For %s!" % asset.symbol)
+		no_operation()
+		#lg.info("TA Not Sufficient For %s!" % asset.symbol)
 		
 def run_sell_loop(positions):
 	for position in positions:
@@ -130,10 +135,11 @@ def main_loop(assets):
 			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(i) for i in assets)
 			with alive_bar(len(assets)) as bar:
 				for asset in assets:
+					get_ticker_position(asset)
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
-			assets = get_positions()
+			positions = get_positions()
 		lg.info("Market is Closed, Sleeping...")
 		cancel_orders()
 		run_sleep()
