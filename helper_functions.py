@@ -21,7 +21,7 @@ def check_ta(asset):
 		asset.ta = recommendation
 		#lg.info("TradingView Recommendation: %s" % recommendation)
 	except Exception as e:
-		#lg.info("Unable To Find %s TA!" % ticker)
+		#lg.info("Unable To Find %s TA!" % asset.symbol)
 		asset.ta = ""
 	return asset
         
