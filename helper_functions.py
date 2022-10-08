@@ -45,13 +45,13 @@ def apewisdom_sentiment(asset):
 		lg.info("ApeWisdom Sentiment: %s" % reddit_sentiment)
 		asset.reddit_sentiment = reddit_sentiment
 	else:
-		lg.info("No Percentage Available for %s" % ticker)
+		lg.info("No Percentage Available for %s" % asset.symbol)
 		asset.reddit_sentiment = 0.0
 	return asset
         
 def get_pcr(asset):
 	barchart_url = "https://www.barchart.com/stocks/quotes/"
-	url = barchart_url + ticker + "/put-call-ratios"
+	url = barchart_url + asset.symbol + "/put-call-ratios"
 	req = Request(url=url, headers={'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'})
 	try:
 		response = urlopen(req)
@@ -79,7 +79,7 @@ def get_pcr(asset):
 		#lg.info("BarChart PCR: %s" % barchart_pcr)
 		asset.pcr = barchart_pcr
 	else:
-		#lg.info("No PCR Available for %s" % ticker)
+		#lg.info("No PCR Available for %s" % asset.symbol)
 		asset.pcr = 0.0
 	return asset
         
@@ -135,7 +135,7 @@ def get_pivots(asset):
         
 def get_price(asset):
 	try:
-		stock_info = yf.Ticker(ticker).info
+		stock_info = yf.Ticker(asset.symbol).info
 		asset.price = stock_info['regularMarketPrice']
 		return asset
 	except Exception as e:
