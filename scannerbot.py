@@ -136,6 +136,7 @@ def main_loop(assets):
 			with alive_bar(len(assets)) as bar:
 				for asset in assets:
 					get_ticker_position(asset)
+					get_price(asset)
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
