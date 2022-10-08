@@ -104,9 +104,10 @@ def run_buy_loop(asset):
 			stock_price = get_price(ticker)
 			if stock_price is not None:
 				new_qty = round(gvars.order_size_usd/(stock_price + .0000000000001))
+				pivots = get_pivots(ticker, exchange, stock_price)
 			else:
 				new_qty = 0
-			pivots = get_pivots(ticker, exchange, stock_price)
+				pivots = 0
 			print(pivots)
 			new_qty = new_qty * pivots
 			if pivots > 0:
