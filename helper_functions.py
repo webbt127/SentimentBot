@@ -33,6 +33,7 @@ def check_ta2(asset):
 		return asset
 	except Exception as e:
 		#lg.info("Unable To Find %s TA!" % ticker)
+		asset.ta = ""
 		return asset
         
 def apewisdom_sentiment(ticker):
