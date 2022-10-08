@@ -103,9 +103,9 @@ def calc_qty(asset):
 def run_buy_loop(asset):
 	if asset.ta == 'STRONG_BUY':
 		if asset.qty == 0:
+			get_price(asset)
 			get_pivots(asset)
 			if asset.pivot > 0:
-				get_price(asset)
 				calc_qty(asset)
 				submit_buy_order(asset)
 		else:
@@ -136,7 +136,6 @@ def main_loop(assets):
 			with alive_bar(len(assets)) as bar:
 				for asset in assets:
 					get_ticker_position(asset)
-					get_price(asset)
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
