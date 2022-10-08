@@ -28,7 +28,7 @@ def check_ta2(asset):
 		ticker_ta = TA_Handler(symbol=asset.symbol, screener="america", exchange=asset.exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
-		asset.ta
+		asset.ta = recommendation
 		#lg.info("TradingView Recommendation: %s" % recommendation)
 		return asset
 	except Exception as e:
