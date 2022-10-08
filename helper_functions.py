@@ -12,9 +12,9 @@ import time
 from alive_progress import alive_bar
 from requests_html import HTMLSession
 
-def check_ta(ticker, exchange):
+def check_ta(asset):
 	try:
-		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
+		ticker_ta = TA_Handler(symbol=asset.symbol, screener="america", exchange=asset.exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
 		#lg.info("TradingView Recommendation: %s" % recommendation)
