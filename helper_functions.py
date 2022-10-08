@@ -12,29 +12,18 @@ import time
 from alive_progress import alive_bar
 from requests_html import HTMLSession
 
-def check_ta1(ticker, exchange):
-	try:
-		ticker_ta = TA_Handler(symbol=ticker, screener="america", exchange=exchange, interval=Interval.INTERVAL_1_HOUR)
-		summary = ticker_ta.get_analysis().summary
-		recommendation = summary['RECOMMENDATION']
-		#lg.info("TradingView Recommendation: %s" % recommendation)
-		return recommendation
-	except Exception as e:
-		#lg.info("Unable To Find %s TA!" % ticker)
-		return ""
-	
-def check_ta2(asset):
+
+def check_ta(asset):
 	try:
 		ticker_ta = TA_Handler(symbol=asset.symbol, screener="america", exchange=asset.exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
 		asset.ta = recommendation
 		#lg.info("TradingView Recommendation: %s" % recommendation)
-		return asset
 	except Exception as e:
 		#lg.info("Unable To Find %s TA!" % ticker)
 		asset.ta = ""
-		return asset
+	return asset
         
 def apewisdom_sentiment(asset):
 	apewisdom_url = "https://apewisdom.io/stocks/"
