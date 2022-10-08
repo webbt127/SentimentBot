@@ -156,6 +156,6 @@ rest_client = REST(gvars.API_KEY, gvars.API_SECRET_KEY, gvars.API_URL)
 market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
 active_assets = rest_client.list_assets(status='active')
-assets = [a for a in active_assets if a.exchange == 'NASDAQ' or a.exchange == 'NYSE']
+assets = [a for a in active_assets if (a.exchange == 'NASDAQ' or a.exchange == 'NYSE') and len(a.symbol) < 5]
 cancel_orders() # cancel all open orders before iterating
 main_loop()
