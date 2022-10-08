@@ -103,6 +103,7 @@ def get_pivots(asset):
 		index = index + 1
 	if pivots[80] == '—' or pivots[86] == '—' or pivots[92] == '—' or pivots[98] == '—' or pivots[104] == '—' or pivots[110] == '—' or pivots[116] == '—':
 		asset.pivot = 0
+		return asset
 	asset.s3 = float(pivots[80])
 	asset.s2 = float(pivots[86])
 	asset.s1 = float(pivots[92])
