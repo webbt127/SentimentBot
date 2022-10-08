@@ -110,24 +110,24 @@ def run_buy_loop(asset):
 	else:
 		lg.info("TA Not Sufficient For %s!" % asset.symbol)
 		
-def run_sell_loop(assets):
-	for asset in assets:
-		get_ticker_position(asset)
-		check_ta(asset)
-		get_price(asset)
-		get_pivots(asset)
-		#pcr = get_pcr(asset.symbol)
-		if asset.ta == 'STRONG_SELL' or asset.ta == 'SELL' or asset.pivot < 0:#pcr < 1.0:
-			submit_sell_order(asset)
+def run_sell_loop(positions):
+	for position in positions:
+		get_ticker_position(position)
+		check_ta(position)
+		get_price(position)
+		get_pivots(position)
+		#pcr = get_pcr(position.symbol)
+		if position.ta == 'STRONG_SELL' or position.ta == 'SELL' or position.pivot < 0:#pcr < 1.0:
+			submit_sell_order(position)
 		else:
-			lg.info("Conditions not sufficient to sell %s." % asset.symbol)
+			lg.info("Conditions not sufficient to sell %s." % position.symbol)
 	
 def main_loop():
 	while 1:
-		assets = get_positions()
+		positions = get_positions()
 		market_open = check_market_availability()
 		while market_open:
-			run_sell_loop(assets)
+			run_sell_loop(positions)
 			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(i) for i in assets)
 			with alive_bar(len(assets)) as bar:
 				for asset in assets:
