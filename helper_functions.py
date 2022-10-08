@@ -28,11 +28,12 @@ def check_ta2(asset):
 		ticker_ta = TA_Handler(symbol=asset.symbol, screener="america", exchange=asset.exchange, interval=Interval.INTERVAL_1_HOUR)
 		summary = ticker_ta.get_analysis().summary
 		recommendation = summary['RECOMMENDATION']
+		asset.ta
 		#lg.info("TradingView Recommendation: %s" % recommendation)
-		return recommendation
+		return asset
 	except Exception as e:
 		#lg.info("Unable To Find %s TA!" % ticker)
-		return ""
+		return asset
         
 def apewisdom_sentiment(ticker):
 	apewisdom_url = "https://apewisdom.io/stocks/"
