@@ -91,7 +91,6 @@ def no_operation():
 	return
 
 def run_buy_loop(asset):
-	check_ta(asset)
 	if asset.ta == 'STRONG_BUY':
 		get_ticker_position(asset)
 		if asset.qty == 0:
