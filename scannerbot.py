@@ -95,7 +95,6 @@ def no_operation():
 def run_buy_loop(asset):
 	ticker = asset.symbol
 	exchange = asset.exchange
-	print(asset)
 	ta = check_ta(ticker, exchange)
 	if ta == 'STRONG_BUY':
 		current_position = get_ticker_position(ticker)
