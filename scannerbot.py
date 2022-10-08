@@ -139,7 +139,6 @@ def main_loop():
 			run_sell_loop(positions, position_list)
 			with alive_bar(len(assets)) as bar:
 				Parallel(n_jobs=8, prefer="threads")(delayed(check_ta2)(i) for i in assets)
-				bar()
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
