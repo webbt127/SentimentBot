@@ -95,8 +95,8 @@ def no_operation():
 def run_buy_loop(asset):
 	ticker = asset.symbol
 	exchange = asset.exchange
-	ta = check_ta(ticker, exchange)
-	if ta == 'STRONG_BUY':
+	#ta = check_ta(ticker, exchange)
+	if asset.ta == 'STRONG_BUY':
 		current_position = get_ticker_position(ticker)
 		if current_position == 0:
 			#pcr = get_pcr(ticker)
@@ -139,7 +139,6 @@ def main_loop():
 			run_sell_loop(positions, position_list)
 			for i in assets:
 				i.ta = check_ta(i.symbol, i.exchange)
-				print(i.ta)
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
