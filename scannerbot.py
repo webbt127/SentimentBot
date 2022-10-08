@@ -119,10 +119,10 @@ def run_buy_loop(asset):
 		
 def run_sell_loop(positions, position_list):
 	for position in positions:
-		ticker = position_list[position].__getattr__('symbol')
-		exchange = position_list[position].__getattr__('exchange')
+		asset.ticker = position_list[position].__getattr__('symbol')
+		asset.exchange = position_list[position].__getattr__('exchange')
 		current_qty = get_ticker_position(ticker)
-		ta = check_ta(ticker, exchange)
+		ta = check_ta(asset)
 		stock_price = get_price(ticker)
 		pivots = get_pivots(ticker, exchange, stock_price)
 		#pcr = get_pcr(ticker)
@@ -137,8 +137,9 @@ def main_loop():
 		market_open = check_market_availability()
 		while market_open:
 			run_sell_loop(positions, position_list)
-			for i in assets:
-				i.ta = check_ta(i.symbol, i.exchange)
+			with alive_bar(len(assets)) as bar:
+				Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(i) for i in assets)
+				bar()
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
