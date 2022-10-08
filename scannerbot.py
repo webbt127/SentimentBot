@@ -137,6 +137,8 @@ def main_loop():
 		market_open = check_market_availability()
 		while market_open:
 			run_sell_loop(positions, position_list)
+			for i in assets:
+				i.ta = check_ta(i.symbol, i.exchange)
 			with alive_bar(len(assets)) as bar:
 				for i in assets:
 					run_buy_loop(i)
