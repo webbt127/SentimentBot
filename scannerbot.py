@@ -101,18 +101,15 @@ def calc_qty(asset):
 	return asset
 
 def run_buy_loop(asset):
-	if asset.ta == 'STRONG_BUY':
-		if asset.qty == 0:
-			#get_price(asset)
-			get_pivots(asset)
-			if asset.pivot > 0:
-				calc_qty(asset)
-				submit_buy_order(asset)
-		else:
-			lg.info("Position Already Exists!")
+	get_ticker_position(asset)
+	if asset.qty == 0:
+		#get_price(asset)
+		get_pivots(asset)
+		if asset.pivot > 0:
+			calc_qty(asset)
+			submit_buy_order(asset)
 	else:
-		no_operation()
-		#lg.info("TA Not Sufficient For %s!" % asset.symbol)
+		lg.info("Position Already Exists!")
 		
 def run_sell_loop(positions):
 	for position in positions:
@@ -138,8 +135,6 @@ def main_loop(assets):
 			lg.info("Assets Filtered")
 			Parallel(n_jobs=8, prefer="threads")(delayed(get_price)(asset) for asset in assets_filtered_ta)
 			lg.info("Prices Retrieved!")
-			Parallel(n_jobs=8, prefer="threads")(delayed(get_ticker_position)(asset) for asset in assets_filtered_ta)
-			lg.info("Positions Checked!")
 			with alive_bar(len(assets_filtered_ta)) as bar:
 				for asset in assets_filtered_ta:
 					run_buy_loop(asset)
