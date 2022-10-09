@@ -102,7 +102,7 @@ def calc_qty(asset):
 def run_buy_loop(asset):
 	if asset.ta == 'STRONG_BUY':
 		if asset.qty == 0:
-			get_price(asset)
+			#get_price(asset)
 			get_pivots(asset)
 			if asset.pivot > 0:
 				calc_qty(asset)
@@ -131,10 +131,11 @@ def main_loop(assets):
 		market_open = check_market_availability()
 		while market_open:
 			run_sell_loop(positions)
-			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(i) for i in assets)
+			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(asset) for asset in assets)
+			Parallel(n_jobs=8, prefer="threads")(delayed(get_price)(asset) for asset in assets)
+			Parallel(n_jobs=8, prefer="threads")(delayed(get_ticker_position)(asset) for asset in assets)
 			with alive_bar(len(assets)) as bar:
 				for asset in assets:
-					get_ticker_position(asset)
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
