@@ -15,7 +15,6 @@ from helper_functions import *
 
 		
 def check_market_availability():
-	return True
 	clock = get_clock()
 	minutes = seconds_to_close(clock)
 	if clock.is_open: #minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
@@ -157,6 +156,5 @@ market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
 active_assets = rest_client.list_assets(status='active')
 assets = [a for a in active_assets if (a.exchange == 'NASDAQ' or a.exchange == 'NYSE') and a.tradable == True]
-print(assets)
 cancel_orders() # cancel all open orders before iterating
 main_loop(assets)
