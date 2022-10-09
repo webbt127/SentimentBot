@@ -82,7 +82,7 @@ def run_sleep():
 	if seconds < 63000 or seconds > 64000:
 		if sleep_length < 1:
 			sleep_length = 1
-		with alive_bar(sleep_length) as bar:
+		with alive_bar(sleep_length, title='Market Closed, Sleeping...') as bar:
 			for _ in range(sleep_length):
 				time.sleep(1)
 				bar()
@@ -129,22 +129,21 @@ def main_loop(assets):
 		market_open = check_market_availability()
 		while market_open:
 			run_sell_loop(positions)
-			with alive_bar(0) as bar:
+			with alive_bar(0, title='Checking Technicals...') as bar:
 				Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(asset) for asset in assets)
 				bar()
 			lg.info("Asset List TA Checked!")
 			assets_filtered_ta = [a for a in assets if a.ta == 'STRONG_BUY']
-			with alive_bar(0) as bar:
+			with alive_bar(0, title='Getting Prices...') as bar:
 				Parallel(n_jobs=8, prefer="threads")(delayed(get_price)(asset) for asset in assets_filtered_ta)
 				bar()
 			lg.info("Prices Retrieved!")
-			with alive_bar(len(assets_filtered_ta)) as bar:
+			with alive_bar(len(assets_filtered_ta), title='Checking Filtered Assets To Buy...') as bar:
 				for asset in assets_filtered_ta:
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
 			positions = get_positions()
-		lg.info("Market is Closed, Sleeping...")
 		cancel_orders()
 		run_sleep()
 	
