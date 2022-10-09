@@ -133,10 +133,15 @@ def main_loop(assets):
 		while market_open:
 			run_sell_loop(positions)
 			Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(asset) for asset in assets)
-			Parallel(n_jobs=8, prefer="threads")(delayed(get_price)(asset) for asset in assets)
-			Parallel(n_jobs=8, prefer="threads")(delayed(get_ticker_position)(asset) for asset in assets)
-			with alive_bar(len(assets)) as bar:
-				for asset in assets:
+			lg.info("Asset List TA Checked!")
+			assets_filtered_ta = [a for a in assets if a.ta == 'STRONG_BUY']
+			lg.info("Assets Filtered")
+			Parallel(n_jobs=8, prefer="threads")(delayed(get_price)(asset) for asset in assets_filtered_ta)
+			lg.info("Prices Retrieved!")
+			Parallel(n_jobs=8, prefer="threads")(delayed(get_ticker_position)(asset) for asset in assets_filtered_ta)
+			lg.info("Positions Checked!")
+			with alive_bar(len(assets_filtered_ta)) as bar:
+				for asset in assets_filtered_ta:
 					run_buy_loop(asset)
 					bar()
 			market_open = check_market_availability()
