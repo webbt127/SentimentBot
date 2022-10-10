@@ -15,6 +15,7 @@ from helper_functions import *
 
 		
 def check_market_availability():
+	return True
 	clock = get_clock()
 	minutes = seconds_to_close(clock)
 	if clock.is_open: #minutes < (gvars.minutes_min * 60) or minutes > (gvars.minutes_max * 60):
@@ -127,7 +128,7 @@ def main_loop(assets):
 		positions = get_positions()
 		market_open = check_market_availability()
 		while market_open:
-			run_sell_loop(positions)
+			#run_sell_loop(positions)
 			with alive_bar(0, title='Checking Technicals...') as bar:
 				Parallel(n_jobs=8, prefer="threads")(delayed(check_ta)(asset) for asset in assets)
 				bar()
