@@ -114,8 +114,8 @@ def run_sell_loop(positions):
 	for position in positions:
 		get_ticker_position(position)
 		check_ta(position)
-		get_pivots(position)
 		position.price = position.current_price
+		get_pivots(position)
 		#pcr = get_pcr(position.symbol)
 		if position.ta == 'STRONG_SELL' or position.ta == 'SELL' or position.pivot < 0:#pcr < 1.0:
 			submit_sell_order(position)
@@ -156,7 +156,5 @@ market_open = check_market_availability() # initial time check
 positions = get_positions() # check existing positions before iterating
 active_assets = rest_client.list_assets(status='active')
 assets = [a for a in active_assets if (a.exchange == 'NASDAQ' or a.exchange == 'NYSE') and a.tradable == True]
-test = rest_client.get_asset('TSLA')
-print(test)
 cancel_orders() # cancel all open orders before iterating
 main_loop(assets)
