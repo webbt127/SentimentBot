@@ -152,5 +152,5 @@ def get_all_prices(assets):
 	except Exception as e:
 		lg.info(e)
 	for asset in assets:
-		asset.price = tickers.tickers[asset.symbol].info['regularMarketPrice']
-		print(asset)
+		price = tickers.tickers[asset.symbol].info['regularMarketPrice']
+		print(price)
