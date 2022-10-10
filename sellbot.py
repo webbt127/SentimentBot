@@ -114,6 +114,7 @@ def run_sell_loop(positions):
 	for position in positions:
 		get_ticker_position(position)
 		check_ta(position)
+		print(position)
 		get_price(position)
 		get_pivots(position)
 		#pcr = get_pcr(position.symbol)
