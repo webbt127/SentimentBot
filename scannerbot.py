@@ -101,14 +101,13 @@ def calc_qty(asset):
 
 def run_buy_loop(asset):
 	get_ticker_position(asset)
-	if asset.qty == 0:
-		#get_price(asset)
+	if asset.qty == 0 and asset.price is not None:
 		get_pivots(asset)
 		if asset.pivot > 0:
 			calc_qty(asset)
 			submit_buy_order(asset)
 	else:
-		lg.info("Position Already Exists!")
+		lg.info("Unable To Buy Asset!")
 		
 def run_sell_loop(positions):
 	for position in positions:
