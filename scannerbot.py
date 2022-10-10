@@ -132,8 +132,9 @@ def main_loop(assets):
 				bar()
 			lg.info("Asset List TA Checked!")
 			assets_filtered_ta = [a for a in assets if a.ta == 'STRONG_BUY']
-			get_all_prices(assets_filtered_ta)
-			print(assets_filtered_ta)
+			with alive_bar(0, title='Getting Prices...') as bar:
+				Parallel(n_jobs=8, prefer="threads")(delayed(get_price)(asset) for asset in assets_filtered_ta)
+				bar()
 			lg.info("Prices Retrieved!")
 			with alive_bar(len(assets_filtered_ta), title='Checking Filtered Assets To Buy...') as bar:
 				for asset in assets_filtered_ta:
