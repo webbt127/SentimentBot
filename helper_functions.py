@@ -147,8 +147,8 @@ def get_all_prices(assets):
 	asset_list = []
 	for asset in assets:
 		asset_list.append(asset.symbol)
-	print(asset_list)
 	try:
 		stock_info = yf.Ticker(tickers=asset_list)
+		print(stock_info)
 	except Exception as e:
 		lg.info(e)
