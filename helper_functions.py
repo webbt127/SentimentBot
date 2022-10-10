@@ -153,4 +153,5 @@ def get_all_prices(assets):
 		lg.info(e)
 	for asset in assets:
 		price = tickers.tickers[asset.symbol].info['regularMarketPrice']
-		print(price)
+		asset.price = price
+	return assets
