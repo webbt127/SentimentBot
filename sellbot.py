@@ -114,7 +114,7 @@ def run_sell_loop(positions):
 	for position in positions:
 		get_ticker_position(position)
 		check_ta(position)
-		position.price = position.current_price
+		position.price = float(position.current_price)
 		get_pivots(position)
 		#pcr = get_pcr(position.symbol)
 		if position.ta == 'STRONG_SELL' or position.ta == 'SELL' or position.pivot < 0:#pcr < 1.0:
