@@ -140,6 +140,7 @@ def get_price(asset):
 		asset.price = stock_info['regularMarketPrice']
 		return asset
 	except Exception as e:
+		asset.price = None
 		lg.info(e)
 		return
 
