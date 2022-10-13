@@ -104,13 +104,17 @@ def get_pivots(asset):
 	if pivots[80] == '—' or pivots[86] == '—' or pivots[92] == '—' or pivots[98] == '—' or pivots[104] == '—' or pivots[110] == '—' or pivots[116] == '—':
 		asset.pivot = 0
 		return asset
-	asset.s3 = float(pivots[80])
-	asset.s2 = float(pivots[86])
-	asset.s1 = float(pivots[92])
-	asset.p = float(pivots[98])
-	asset.r1 = float(pivots[104])
-	asset.r2 = float(pivots[110])
-	asset.r3 = float(pivots[116])
+	if pivots[80] is not None and pivots[86] is not None and pivots[92] is not None and pivots[98] is not None and pivots[104] is not None and pivots[110] is not None and pivots[116] is not None:
+		asset.s3 = float(pivots[80])
+		asset.s2 = float(pivots[86])
+		asset.s1 = float(pivots[92])
+		asset.p = float(pivots[98])
+		asset.r1 = float(pivots[104])
+		asset.r2 = float(pivots[110])
+		asset.r3 = float(pivots[116])
+	else:
+		asset.pivot = 0
+		return asset
 	if pivots[0] is not None and asset.price is not None:
 		if asset.price > asset.s1 and asset.price < asset.p:
 			asset.pivot = 1
