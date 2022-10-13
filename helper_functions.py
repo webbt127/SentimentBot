@@ -142,22 +142,9 @@ def get_price(asset):
 	try:
 		stock_info = yf.Ticker(asset.symbol).info
 		asset.price = stock_info['regularMarketPrice']
-		asset.volume = stock_info['averageDailyVolume10Day']
+		asset.volumetenday = stock_info['averageDailyVolume10Day']
 		return asset
 	except Exception as e:
 		asset.price = None
 		lg.info(e)
 		return
-
-def get_all_prices(assets):
-	asset_list = []
-	for asset in assets:
-		asset_list.append(asset.symbol)
-	try:
-		tickers = yf.Tickers(asset_list)
-	except Exception as e:
-		lg.info(e)
-	for asset in assets:
-		price = tickers.tickers[asset.symbol].info['regularMarketPrice']
-		asset.price = price
-	return assets
