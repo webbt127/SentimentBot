@@ -102,7 +102,7 @@ def calc_qty(asset):
 
 def run_buy_loop(asset):
 	get_ticker_position(asset)
-	if asset.qty == 0 and asset.price is not None:
+	if asset.qty == 0 and asset.price is not None and asset.volumetenday > 1000000:
 		get_pivots(asset)
 		if asset.pivot > 0:
 			calc_qty(asset)
