@@ -137,6 +137,7 @@ def get_pivots(asset):
 def get_price(asset):
 	try:
 		stock_info = yf.Ticker(asset.symbol).info
+		print(stock_info)
 		asset.price = stock_info['regularMarketPrice']
 		return asset
 	except Exception as e:
