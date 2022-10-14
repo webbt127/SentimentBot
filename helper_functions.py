@@ -146,5 +146,6 @@ def get_price(asset):
 		return asset
 	except Exception as e:
 		asset.price = None
+		asset.volumetenday = 0
 		lg.info(e)
 		return
