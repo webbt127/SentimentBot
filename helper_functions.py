@@ -143,7 +143,6 @@ def get_price(asset):
 		stock_info = yf.Ticker(asset.symbol).info
 		asset.price = stock_info['regularMarketPrice']
 		asset.volumetenday = stock_info['averageDailyVolume10Day']
-		lg.info(asset.volumetenday)
 		return asset
 	except Exception as e:
 		asset.price = None
